@@ -13,6 +13,7 @@ import { getInitials } from "@/utils/utilities";
 import { ModelConfig } from "@/interfaces/ModelConfig";
 import { Home, LayoutGrid } from "lucide-react";
 import { LucideIcons } from "@/components/LucideIcons";
+import Image from "next/image";
 
 const Sidebar: React.FC = () => {
   const pathname = usePathname();
@@ -42,7 +43,16 @@ const Sidebar: React.FC = () => {
           href="/"
         >
           <span className="lg:hidden">{getInitials(appTitle)}</span>
-          <span className="hidden lg:block">{AppConfig.appTitle}</span>
+          {/* <span className="hidden lg:block">{AppConfig.appTitle}</span> */}
+          <div className="relative hidden lg:block">
+            <Image
+              objectFit="cover"
+              src="/panda.png"
+              height={70}
+              width={130}
+              alt="App Logo"
+            />
+          </div>
         </Link>
       </div>
       <div className="flex flex-col w-full text-sm">

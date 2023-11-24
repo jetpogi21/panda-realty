@@ -15,7 +15,7 @@ rightModelID: number;
 relationship: string;
 leftForeignKey: string;
 rightForeignKey: string;
-declareInModel: number;
+declareInModel: number | null;
 through: number | null;
 isSimpleRelationship: boolean;
 fieldToBeInserted: string | null;
