@@ -37,19 +37,18 @@ const Sidebar: React.FC = () => {
         "lg:min-w-[250px] max-w-[250px] p-4 flex flex-col items-center flex-grow-0 border-r border-border"
       )}
     >
-      <div className={cn("h-[100px] flex items-center")}>
+      <div className={cn("h-[120px] flex items-center")}>
         <Link
           className="text-2xl font-bold leading-none"
           href="/"
         >
           <span className="lg:hidden">{getInitials(appTitle)}</span>
           {/* <span className="hidden lg:block">{AppConfig.appTitle}</span> */}
-          <div className="relative hidden lg:block">
+          <div className="relative items-center justify-center hidden lg:flex">
             <Image
-              objectFit="cover"
               src="/panda.png"
               height={70}
-              width={130}
+              width={120}
               alt="App Logo"
             />
           </div>
