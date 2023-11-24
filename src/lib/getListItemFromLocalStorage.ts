@@ -6,6 +6,8 @@ export function getListItemFromLocalStorage<T>(
   data: T,
   fieldName: keyof T
 ) {
+  if (!data) return "";
+
   const relatedList = getLocalStorage(storageKey) as any[];
 
   const parentData = relatedList.find(
