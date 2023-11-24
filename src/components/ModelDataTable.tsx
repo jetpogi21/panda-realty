@@ -498,7 +498,7 @@ const ModelDataTable = <T, U, V>({
           </div>
         </div>
 
-        <div className="border rounded-md overflow-x-auto lg:w-[calc(100vw-299px)] xl:w-[calc(100vw-285px)]">
+        <div className="border rounded-md overflow-x-auto lg:w-[calc(100vw-299px)] xl:w-[calc(100vw-300px)]">
           <DataTable
             modelConfig={modelConfig}
             table={modelTable}
