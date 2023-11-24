@@ -42,6 +42,7 @@ import { useSessionStorage } from "usehooks-ts";
 import { getSessionStorage } from "@/lib/getSessionStorage";
 import { AllCellOptions } from "@/types/tanstack-table";
 import { removeRequiredListFromLocalStorage } from "@/lib/removeRequiredListFromLocalStorage";
+import { replaceItemByIndex } from "@/lib/replaceItemByIndex";
 
 interface ModelSubformProps<T> {
   formik: FormikProps<T>;
@@ -321,16 +322,17 @@ const ModelSubform = <T,>({
               const queue = getSessionStorage<T[]>("queue") || [];
 
               const goToNewRecord = () => {
-                childFormik.setValues(
-                  //@ts-ignore
-                  getInitialValues<T>(modelConfig, undefined, {
-                    requiredList,
-                    defaultValues: {
-                      [leftFieldName.fieldName]:
-                        formik.values[parentPrimaryKeyField as FormikValueKey],
-                    },
-                  })
-                );
+                const newRow = getInitialValues<T>(modelConfig, undefined, {
+                  requiredList,
+                  defaultValues: {
+                    [leftFieldName.fieldName]:
+                      formik.values[parentPrimaryKeyField as FormikValueKey] ||
+                      0,
+                  },
+                });
+
+                //@ts-ignore
+                childFormik.setValues(newRow);
 
                 const [firstFieldInForm, _] = getFirstAndLastFieldInForm(
                   modelConfig.fields,
@@ -346,12 +348,18 @@ const ModelSubform = <T,>({
               const rows = formik.values[pluralizedModelName as FormikValueKey];
               const primaryKeyValue = values[primaryKeyField as ValueKey];
 
-              //@ts-ignore
-              setQueue([...queue, { ...values, touched: true }]);
-
               if (addNew) {
-                //@ts-ignore
-                setQueue([...queue, { ...values, touched: true }]);
+                setQueue([
+                  //@ts-ignore
+                  ...queue,
+                  //@ts-ignore
+                  {
+                    ...values,
+                    touched: true,
+                    //@ts-ignore
+                    index: rows.length + queue.length,
+                  },
+                ]);
                 goToNewRecord();
               } else {
                 let newRows = rows as T[];
@@ -359,6 +367,9 @@ const ModelSubform = <T,>({
                 queue.forEach((queued) => {
                   const primaryKeyValue =
                     queued[primaryKeyField as keyof typeof queued];
+                  const queuedIndex = queued[
+                    "index" as keyof typeof queued
+                  ] as number;
                   if (primaryKeyValue) {
                     newRows = newRows.map((item) =>
                       item[primaryKeyField as keyof typeof item] ==
@@ -366,6 +377,15 @@ const ModelSubform = <T,>({
                         ? { ...queued, touched: true }
                         : item
                     );
+                  } else if (
+                    queuedIndex != undefined &&
+                    queuedIndex >= 0 &&
+                    queuedIndex < newRows.length
+                  ) {
+                    newRows = replaceItemByIndex(newRows, queuedIndex, {
+                      ...queued,
+                      touched: true,
+                    });
                   } else {
                     newRows = [...newRows, { ...queued, touched: true }];
                   }
@@ -379,9 +399,30 @@ const ModelSubform = <T,>({
                       : item
                   );
                 } else {
-                  //@ts-ignore
-                  newRows = [...newRows, { ...values, touched: true }];
+                  const valuesIndex = values[
+                    "index" as keyof typeof values
+                  ] as number;
+                  if (
+                    valuesIndex != undefined &&
+                    valuesIndex >= 0 &&
+                    valuesIndex < newRows.length
+                  ) {
+                    //@ts-ignore
+                    newRows = replaceItemByIndex(newRows, valuesIndex, {
+                      ...values,
+                      touched: true,
+                    });
+                  } else {
+                    newRows = [
+                      //@ts-ignore
+                      ...newRows,
+                      //@ts-ignore
+                      { ...values, touched: true, index: newRows.length },
+                    ];
+                  }
                 }
+
+                /* newRows = newRows.map((row, index) => ({ ...row, index })); */
 
                 formik.setFieldValue(pluralizedModelName, newRows);
                 closeDialog();
@@ -584,13 +625,14 @@ const ModelSubform = <T,>({
               buttonVariants({ variant: "secondary", size: "sm" }),
               "ml-auto"
             )}
-            onClick={() =>
+            onClick={() => {
+              setQueue([]);
               openDialogHandler({
                 ...defaultFormValue,
                 [leftFieldName.fieldName]:
                   formik.values[parentPrimaryKeyField as keyof T],
-              })
-            }
+              });
+            }}
           >
             Add New
           </Button>

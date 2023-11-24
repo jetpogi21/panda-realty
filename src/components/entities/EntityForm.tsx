@@ -6,12 +6,7 @@ import {
   EntitySearchParams,
 } from "@/interfaces/EntityInterfaces";
 import { Form, Formik, FormikHelpers, FormikProps } from "formik";
-import React, {
-  MouseEventHandler,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { MouseEventHandler, useEffect, useRef, useState } from "react";
 import { BasicModel } from "@/interfaces/GeneralInterfaces";
 import { useListURLStore, useURL } from "@/hooks/useURL";
 import { Button } from "@/components/ui/Button";
@@ -41,7 +36,6 @@ import useScreenSize from "@/hooks/useScreenSize";
 import { removeRequiredListFromLocalStorage } from "@/lib/removeRequiredListFromLocalStorage";
 import { generateDeletedChildRecords } from "@/lib/generateDeletedChildRecords";
 
-
 interface ModelFormProps {
   onSuccess: () => void;
 }
@@ -51,6 +45,7 @@ interface EntityFormProps {
   id: string;
   modalFormProps?: ModelFormProps;
   hiddenField?: string;
+  defaultValues?: Record<string, unknown>;
   onSubmit?: (
     values: EntityFormFormikInitialValues,
     formik: FormikHelpers<EntityFormFormikInitialValues>
@@ -62,7 +57,7 @@ const primaryKeyField = findModelPrimaryKeyField(modelConfig).fieldName;
 const slugField = modelConfig.slugField || primaryKeyField;
 
 const EntityForm: React.FC<EntityFormProps> = (prop) => {
-  const { id, modalFormProps, hiddenField, onSubmit } = prop;
+  const { id, modalFormProps, hiddenField, onSubmit, defaultValues } = prop;
   const { router, query, pathname } = useURL<EntitySearchParams>();
 
   //Local states
@@ -104,14 +99,26 @@ const EntityForm: React.FC<EntityFormProps> = (prop) => {
     initialData: prop.data,
   });
 
-  const entity = modelQuery.data as EntityFormFormikInitialValues;
+  const entity =
+    prop.data || (modelQuery.data as EntityFormFormikInitialValues);
 
   const isLarge = useScreenSize("lg");
-  const initialValues = getInitialValues<EntityFormFormikInitialValues>(
-    modelConfig,
-    entity,
-    { requiredList, skipEmptyRow: isLarge }
-  );
+  const initialValues =
+    getInitialValues<EntityFormFormikInitialValues>(
+      modelConfig,
+      //@ts-ignore
+      entity,
+      {
+        requiredList,
+        skipEmptyRow: isLarge,
+        defaultValues: hiddenField ? { [hiddenField]: 0 } : undefined,
+      }
+    );
+
+  if (entity) {
+    //@ts-ignore
+    initialValues["index"] = entity["index"];
+  }
 
   const handleFocus = () => {
     ref && ref.current && ref.current.focus();
@@ -183,7 +190,7 @@ const EntityForm: React.FC<EntityFormProps> = (prop) => {
       values
     );
 
-    //e.g. { deleteJournalEntryItems: [] }
+    //e.g. { deleteEntities: [] }
     const deletedChildRecords = generateDeletedChildRecords(
       modelConfig,
       entity,
@@ -353,28 +360,28 @@ const EntityForm: React.FC<EntityFormProps> = (prop) => {
                 ref={ref}
               />
               <FormikSubformGenerator
-              modelConfig={modelConfig}
-              formik={formik}
-              handleHasUdpate={handleHasUdpate}
-              /* 
+                modelConfig={modelConfig}
+                formik={formik}
+                handleHasUdpate={handleHasUdpate}
+                /* 
                 option={{
-                  JournalEntryItem: {
+                  Entity: {
                     handleBlur: {
                       debit_amount: (newValue) => alert(newValue),
                     },
                   },
                 }} 
                 */
-              /*
+                /*
               Use to filter out the row data for pre-filtering records to be shown to the users
               filterFunction={{ TaskNote: (item) => !item.file }}
               */
-            />
-            <ModelDropzonesForRelationships
-              formik={formik}
-              handleHasUpdate={handleHasUdpate}
-              modelConfig={modelConfig}
-            />
+              />
+              <ModelDropzonesForRelationships
+                formik={formik}
+                handleHasUpdate={handleHasUdpate}
+                modelConfig={modelConfig}
+              />
             </div>
           </div>
         </div>

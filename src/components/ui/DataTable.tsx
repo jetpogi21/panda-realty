@@ -56,7 +56,9 @@ export function DataTable<T>(props: DataTableProps<T>) {
                 <TableHead
                   key={header.id}
                   className={cn({
-                    "w-[50px] px-0": ["select", "actions"].includes(header.id),
+                    "min-w-[50px] px-0": ["select", "actions"].includes(
+                      header.id
+                    ),
                   })}
                   style={{
                     width: `${customWidth}px`,

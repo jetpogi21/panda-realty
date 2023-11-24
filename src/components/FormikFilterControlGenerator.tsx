@@ -1,3 +1,4 @@
+import { FormikCombobox } from "@/components/formik/FormikCombobox";
 import { FormikDateRangePicker } from "@/components/formik/FormikDateRangePicker";
 import { FormikSelect } from "@/components/formik/FormikSelect";
 import { FormikSwitch } from "@/components/formik/FormikSwitch";
@@ -34,18 +35,18 @@ export const FormikFilterControlGenerator = ({
         variableName,
         options,
       }) => {
+        const realOptions =
+          options.length > 0
+            ? options.map((option) => ({
+                id: option.fieldValue,
+                name: option.fieldCaption,
+              }))
+            : requiredList && variableName
+            ? requiredList[variableName + "List"]
+            : [];
+
         switch (controlType) {
           case "Select":
-            const realOptions =
-              options.length > 0
-                ? options.map((option) => ({
-                    id: option.fieldValue,
-                    name: option.fieldCaption,
-                  }))
-                : requiredList && variableName
-                ? requiredList[variableName + "List"]
-                : [];
-
             return (
               <FormikSelect
                 key={filterQueryName}
@@ -65,6 +66,17 @@ export const FormikFilterControlGenerator = ({
                 name={filterQueryName}
                 label={filterCaption!}
                 size={"sm"}
+              />
+            );
+          case "ComboBox":
+            return (
+              <FormikCombobox
+                items={realOptions}
+                key={filterQueryName}
+                containerClassNames={"flex-row min-w-[200px]"}
+                name={filterQueryName}
+                label={filterCaption!}
+                showLabel={false}
               />
             );
           case "DateRangePicker":

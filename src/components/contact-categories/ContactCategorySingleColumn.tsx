@@ -11,6 +11,17 @@ const ContactCategorySingleColumn = <T,>({
 relationshipConfig,
 }: ModelSingleColumnProps<T>) => {
   const contactCategory = cell.row.original as ContactCategoryModel;
+
+  /*
+  //To fetch a certain related field when using a subform since direct object won't be accessible
+  const subAccountTitle = getListItemFromLocalStorage(
+    "sub-account-titles",
+    "id",
+    journalEntryItem,
+    "sub_account_title_id"
+  );
+  */
+
   return (
     <div className="flex flex-col gap-1">
       {generateModelSingleColumnFromFields(modelConfig, contactCategory, relationshipConfig)}

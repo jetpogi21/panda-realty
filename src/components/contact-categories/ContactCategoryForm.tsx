@@ -6,12 +6,7 @@ import {
   ContactCategorySearchParams,
 } from "@/interfaces/ContactCategoryInterfaces";
 import { Form, Formik, FormikHelpers, FormikProps } from "formik";
-import React, {
-  MouseEventHandler,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { MouseEventHandler, useEffect, useRef, useState } from "react";
 import { BasicModel } from "@/interfaces/GeneralInterfaces";
 import { useListURLStore, useURL } from "@/hooks/useURL";
 import { Button } from "@/components/ui/Button";
@@ -41,7 +36,6 @@ import useScreenSize from "@/hooks/useScreenSize";
 import { removeRequiredListFromLocalStorage } from "@/lib/removeRequiredListFromLocalStorage";
 import { generateDeletedChildRecords } from "@/lib/generateDeletedChildRecords";
 
-
 interface ModelFormProps {
   onSuccess: () => void;
 }
@@ -51,6 +45,7 @@ interface ContactCategoryFormProps {
   id: string;
   modalFormProps?: ModelFormProps;
   hiddenField?: string;
+  defaultValues?: Record<string, unknown>;
   onSubmit?: (
     values: ContactCategoryFormFormikInitialValues,
     formik: FormikHelpers<ContactCategoryFormFormikInitialValues>
@@ -62,7 +57,7 @@ const primaryKeyField = findModelPrimaryKeyField(modelConfig).fieldName;
 const slugField = modelConfig.slugField || primaryKeyField;
 
 const ContactCategoryForm: React.FC<ContactCategoryFormProps> = (prop) => {
-  const { id, modalFormProps, hiddenField, onSubmit } = prop;
+  const { id, modalFormProps, hiddenField, onSubmit, defaultValues } = prop;
   const { router, query, pathname } = useURL<ContactCategorySearchParams>();
 
   //Local states
@@ -104,14 +99,26 @@ const ContactCategoryForm: React.FC<ContactCategoryFormProps> = (prop) => {
     initialData: prop.data,
   });
 
-  const contactCategory = modelQuery.data as ContactCategoryFormFormikInitialValues;
+  const contactCategory =
+    prop.data || (modelQuery.data as ContactCategoryFormFormikInitialValues);
 
   const isLarge = useScreenSize("lg");
-  const initialValues = getInitialValues<ContactCategoryFormFormikInitialValues>(
-    modelConfig,
-    contactCategory,
-    { requiredList, skipEmptyRow: isLarge }
-  );
+  const initialValues =
+    getInitialValues<ContactCategoryFormFormikInitialValues>(
+      modelConfig,
+      //@ts-ignore
+      contactCategory,
+      {
+        requiredList,
+        skipEmptyRow: isLarge,
+        defaultValues: hiddenField ? { [hiddenField]: 0 } : undefined,
+      }
+    );
+
+  if (contactCategory) {
+    //@ts-ignore
+    initialValues["index"] = contactCategory["index"];
+  }
 
   const handleFocus = () => {
     ref && ref.current && ref.current.focus();
@@ -183,7 +190,7 @@ const ContactCategoryForm: React.FC<ContactCategoryFormProps> = (prop) => {
       values
     );
 
-    //e.g. { deleteJournalEntryItems: [] }
+    //e.g. { deleteContactCategories: [] }
     const deletedChildRecords = generateDeletedChildRecords(
       modelConfig,
       contactCategory,
@@ -353,28 +360,28 @@ const ContactCategoryForm: React.FC<ContactCategoryFormProps> = (prop) => {
                 ref={ref}
               />
               <FormikSubformGenerator
-              modelConfig={modelConfig}
-              formik={formik}
-              handleHasUdpate={handleHasUdpate}
-              /* 
+                modelConfig={modelConfig}
+                formik={formik}
+                handleHasUdpate={handleHasUdpate}
+                /* 
                 option={{
-                  JournalEntryItem: {
+                  ContactCategory: {
                     handleBlur: {
                       debit_amount: (newValue) => alert(newValue),
                     },
                   },
                 }} 
                 */
-              /*
+                /*
               Use to filter out the row data for pre-filtering records to be shown to the users
               filterFunction={{ TaskNote: (item) => !item.file }}
               */
-            />
-            <ModelDropzonesForRelationships
-              formik={formik}
-              handleHasUpdate={handleHasUdpate}
-              modelConfig={modelConfig}
-            />
+              />
+              <ModelDropzonesForRelationships
+                formik={formik}
+                handleHasUpdate={handleHasUdpate}
+                modelConfig={modelConfig}
+              />
             </div>
           </div>
         </div>

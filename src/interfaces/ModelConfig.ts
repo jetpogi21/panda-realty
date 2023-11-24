@@ -30,7 +30,7 @@ containerWidth: string | null;
 limit: number | null;
 isModal: boolean | null;
 creationOrder: number;
-disableAPIDelete: boolean;
+disableAPIDelete: boolean | null;
 }
 
 interface ModelFieldKeys {

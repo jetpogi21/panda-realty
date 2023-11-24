@@ -7,7 +7,11 @@ import {
   EntitySearchParams,
 } from "@/interfaces/EntityInterfaces";
 import { useQueryClient } from "@tanstack/react-query";
-import { UpdateModelsData, useModelsQuery, useUpdateModelsMutation } from "@/hooks/useModelQuery";
+import {
+  UpdateModelsData,
+  useModelsQuery,
+  useUpdateModelsMutation,
+} from "@/hooks/useModelQuery";
 import { EntityConfig } from "@/utils/config/EntityConfig";
 import { BasicModel, GetModelsResponse } from "@/interfaces/GeneralInterfaces";
 import { useModelPageParams } from "@/hooks/useModelPageParams";
@@ -28,7 +32,7 @@ import EntitySingleColumn from "@/components/entities/EntitySingleColumn";
 import { useGenericMutation } from "@/hooks/useGenericMutation";
 import { getGenericMutationEndpoint } from "@/lib/getGenericMutationEndpoint";
 import { removeRequiredListFromLocalStorage } from "@/lib/removeRequiredListFromLocalStorage";
-
+import { getEntityColumnsToBeOverriden } from "@/lib/entities/getEntityColumnsToBeOverriden";
 
 const EntityTable = <T,>({
   tableStates,
@@ -104,7 +108,7 @@ const EntityTable = <T,>({
     "Add Form Templates": addTaskTemplatesFromTemplateMutation,
   };
   */
-  
+
   //This would produce the same shape as the modelActions above.
   const modelActions = undefined;
 
@@ -120,16 +124,14 @@ const EntityTable = <T,>({
   }); 
   */
 
-  const columnsToBeOverriden = undefined;
-  /* 
-  Run WriteToGetmodelcolumnstobeoverriden_tsx - getModelColumnsToBeOverriden.tsx
-  const columnsToBeOverriden = getTaskColumnsToBeOverriden<
-    T,
-    unknown
-  >();
-  */
+  /* const columnsToBeOverriden = undefined; */
 
-  const handleSubmit = async (values: EntityFormikInitialValues, formik: FormikHelpers<EntityFormikInitialValues>) => {
+  const columnsToBeOverriden = getEntityColumnsToBeOverriden<T, unknown>();
+
+  const handleSubmit = async (
+    values: EntityFormikInitialValues,
+    formik: FormikHelpers<EntityFormikInitialValues>
+  ) => {
     //The reference is the index of the row
     const rowsToBeSubmitted = (
       values[
@@ -158,9 +160,9 @@ const EntityTable = <T,>({
       Object.keys(inserted).forEach((idx) => {
         const numIdx = idx as unknown as number;
         formik.setFieldValue(`${pluralizedModelName}[${idx}]`, {
-          ...values[
-            pluralizedModelName as keyof EntityFormikInitialValues
-          ][numIdx],
+          ...values[pluralizedModelName as keyof EntityFormikInitialValues][
+            numIdx
+          ],
           touched: false,
           [primaryKeyFieldName]:
             inserted[numIdx][primaryKeyFieldName as keyof EntityModel],
@@ -173,9 +175,8 @@ const EntityTable = <T,>({
         description: `${modelConfig.pluralizedVerboseModelName} successfully updated`,
       });
     });
-    
   };
- 
+
   const { openDialog, closeDialog } = useGlobalDialog();
 
   const openDialogHandler = (row?: Row<T>["original"]) => {
@@ -207,7 +208,7 @@ const EntityTable = <T,>({
 
   /* const columnOrderToOverride: [string, number][] = [["isFinished", 2]]; */
   const columnOrderToOverride = undefined;
-  
+
   useEffect(() => {
     setMounted(true);
     return () => {

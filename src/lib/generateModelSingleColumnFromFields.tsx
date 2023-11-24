@@ -1,6 +1,7 @@
 import { ModelConfig } from "@/interfaces/ModelConfig";
 import { AppConfig } from "@/lib/app-config";
 import { findModelUniqueFieldName } from "@/lib/findModelUniqueFieldName";
+import { getListItemFromLocalStorage } from "@/lib/getListItemFromLocalStorage";
 import { getLocalStorage } from "@/lib/getLocalStorage";
 import { findModelPrimaryKeyField, formatCurrency } from "@/utils/utilities";
 import { format } from "date-fns";
@@ -39,23 +40,20 @@ export const generateModelSingleColumnFromFields = <T,>(
 
         if (relatedModel) {
           const uniqueFieldName = findModelUniqueFieldName(relatedModel);
+          const relatedPrimaryKey =
+            findModelPrimaryKeyField(relatedModel).databaseFieldName;
           //@ts-ignore
           let parentData = data[relatedModel.modelName];
           if (!parentData) {
-            const relatedList = getLocalStorage(
-              relatedModel.modelPath
-            ) as any[];
-
-            const relatedModelPk =
-              findModelPrimaryKeyField(relatedModel).databaseFieldName;
-
-            parentData = relatedList.find(
-              (list) =>
-                list[relatedModelPk] === data[fieldName as keyof typeof data]
+            parentData = getListItemFromLocalStorage(
+              relatedModel.modelPath,
+              relatedPrimaryKey,
+              parentData,
+              uniqueFieldName
             );
           }
 
-          result = parentData[uniqueFieldName];
+          result = parentData?.[uniqueFieldName] || "";
         } else {
           //@ts-ignore
           const fieldValue = data[fieldName];

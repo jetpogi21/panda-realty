@@ -11,6 +11,17 @@ const EntitySingleColumn = <T,>({
 relationshipConfig,
 }: ModelSingleColumnProps<T>) => {
   const entity = cell.row.original as EntityModel;
+
+  /*
+  //To fetch a certain related field when using a subform since direct object won't be accessible
+  const subAccountTitle = getListItemFromLocalStorage(
+    "sub-account-titles",
+    "id",
+    journalEntryItem,
+    "sub_account_title_id"
+  );
+  */
+
   return (
     <div className="flex flex-col gap-1">
       {generateModelSingleColumnFromFields(modelConfig, entity, relationshipConfig)}

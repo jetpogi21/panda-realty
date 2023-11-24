@@ -33,7 +33,7 @@ const Sidebar: React.FC = () => {
   return (
     <div
       className={cn(
-        "lg:min-w-[250px] p-4 flex flex-col items-center flex-grow-0 border-r border-border"
+        "lg:min-w-[250px] max-w-[250px] p-4 flex flex-col items-center flex-grow-0 border-r border-border"
       )}
     >
       <div className={cn("h-[100px] flex items-center")}>

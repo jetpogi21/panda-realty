@@ -57,14 +57,21 @@ export const getInitialValues = <T>(
       dataTypeOption,
       allowedOptions,
     }) => {
+      const defaultValues = options?.defaultValues;
       if (record) {
         initialValues[fieldName] = record[fieldName as keyof T];
+        if (defaultValues) {
+          const defaultValueKeys = Object.keys(defaultValues);
+          for (const key of defaultValueKeys) {
+            if (!initialValues[key]) {
+              initialValues[key] = defaultValues[key];
+            }
+          }
+        }
         return;
       }
 
-      const defaultValues = options?.defaultValues;
-
-      if (defaultValues) {
+      if (defaultValues !== undefined) {
         const value = defaultValues[fieldName];
         if (value !== undefined) {
           initialValues[fieldName] = value;

@@ -86,7 +86,13 @@ const Combobox = forwardRef<HTMLButtonElement, Combobox>((props, ref) => {
   return (
     <Popover
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={(open) => {
+        //meaning this is closed
+        if (!open && filteredOptions.length === 0) {
+          setInput("");
+        }
+        setOpen(open);
+      }}
     >
       <PopoverTrigger asChild>
         <Button

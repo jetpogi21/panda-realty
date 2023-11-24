@@ -6,12 +6,7 @@ import {
   BuyerStatusSearchParams,
 } from "@/interfaces/BuyerStatusInterfaces";
 import { Form, Formik, FormikHelpers, FormikProps } from "formik";
-import React, {
-  MouseEventHandler,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { MouseEventHandler, useEffect, useRef, useState } from "react";
 import { BasicModel } from "@/interfaces/GeneralInterfaces";
 import { useListURLStore, useURL } from "@/hooks/useURL";
 import { Button } from "@/components/ui/Button";
@@ -41,7 +36,6 @@ import useScreenSize from "@/hooks/useScreenSize";
 import { removeRequiredListFromLocalStorage } from "@/lib/removeRequiredListFromLocalStorage";
 import { generateDeletedChildRecords } from "@/lib/generateDeletedChildRecords";
 
-
 interface ModelFormProps {
   onSuccess: () => void;
 }
@@ -51,6 +45,7 @@ interface BuyerStatusFormProps {
   id: string;
   modalFormProps?: ModelFormProps;
   hiddenField?: string;
+  defaultValues?: Record<string, unknown>;
   onSubmit?: (
     values: BuyerStatusFormFormikInitialValues,
     formik: FormikHelpers<BuyerStatusFormFormikInitialValues>
@@ -62,7 +57,7 @@ const primaryKeyField = findModelPrimaryKeyField(modelConfig).fieldName;
 const slugField = modelConfig.slugField || primaryKeyField;
 
 const BuyerStatusForm: React.FC<BuyerStatusFormProps> = (prop) => {
-  const { id, modalFormProps, hiddenField, onSubmit } = prop;
+  const { id, modalFormProps, hiddenField, onSubmit, defaultValues } = prop;
   const { router, query, pathname } = useURL<BuyerStatusSearchParams>();
 
   //Local states
@@ -104,14 +99,26 @@ const BuyerStatusForm: React.FC<BuyerStatusFormProps> = (prop) => {
     initialData: prop.data,
   });
 
-  const buyerStatus = modelQuery.data as BuyerStatusFormFormikInitialValues;
+  const buyerStatus =
+    prop.data || (modelQuery.data as BuyerStatusFormFormikInitialValues);
 
   const isLarge = useScreenSize("lg");
-  const initialValues = getInitialValues<BuyerStatusFormFormikInitialValues>(
-    modelConfig,
-    buyerStatus,
-    { requiredList, skipEmptyRow: isLarge }
-  );
+  const initialValues =
+    getInitialValues<BuyerStatusFormFormikInitialValues>(
+      modelConfig,
+      //@ts-ignore
+      buyerStatus,
+      {
+        requiredList,
+        skipEmptyRow: isLarge,
+        defaultValues: hiddenField ? { [hiddenField]: 0 } : undefined,
+      }
+    );
+
+  if (buyerStatus) {
+    //@ts-ignore
+    initialValues["index"] = buyerStatus["index"];
+  }
 
   const handleFocus = () => {
     ref && ref.current && ref.current.focus();
@@ -183,7 +190,7 @@ const BuyerStatusForm: React.FC<BuyerStatusFormProps> = (prop) => {
       values
     );
 
-    //e.g. { deleteJournalEntryItems: [] }
+    //e.g. { deleteBuyerStatus: [] }
     const deletedChildRecords = generateDeletedChildRecords(
       modelConfig,
       buyerStatus,
@@ -353,28 +360,28 @@ const BuyerStatusForm: React.FC<BuyerStatusFormProps> = (prop) => {
                 ref={ref}
               />
               <FormikSubformGenerator
-              modelConfig={modelConfig}
-              formik={formik}
-              handleHasUdpate={handleHasUdpate}
-              /* 
+                modelConfig={modelConfig}
+                formik={formik}
+                handleHasUdpate={handleHasUdpate}
+                /* 
                 option={{
-                  JournalEntryItem: {
+                  BuyerStatus: {
                     handleBlur: {
                       debit_amount: (newValue) => alert(newValue),
                     },
                   },
                 }} 
                 */
-              /*
+                /*
               Use to filter out the row data for pre-filtering records to be shown to the users
               filterFunction={{ TaskNote: (item) => !item.file }}
               */
-            />
-            <ModelDropzonesForRelationships
-              formik={formik}
-              handleHasUpdate={handleHasUdpate}
-              modelConfig={modelConfig}
-            />
+              />
+              <ModelDropzonesForRelationships
+                formik={formik}
+                handleHasUpdate={handleHasUdpate}
+                modelConfig={modelConfig}
+              />
             </div>
           </div>
         </div>
