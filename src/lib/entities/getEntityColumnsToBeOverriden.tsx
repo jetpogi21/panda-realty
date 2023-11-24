@@ -46,14 +46,24 @@ export const getEntityColumnsToBeOverriden = <TData, TValue>() => {
       cell: (cell: CellContext<TData, TValue>) => {
         const row = cell.row.original as EntityModel;
         return (
-          <div className="flex flex-col gap-1">
-            {row.EntityCategory.name}{" "}
+          <div className="flex items-center gap-2">
+            {row.EntityCategory.name}
             {row.BuyerStatus?.name && (
               <GenericTooltip
                 Content="Buyer Status"
                 Trigger={
                   <span className="px-2 text-xs rounded-lg w-fit bg-muted">
                     {row.BuyerStatus.name}
+                  </span>
+                }
+              />
+            )}
+            {row.ContactCategory?.name && (
+              <GenericTooltip
+                Content="Contact Category"
+                Trigger={
+                  <span className="px-2 text-xs rounded-lg w-fit bg-muted">
+                    {row.ContactCategory.name}
                   </span>
                 }
               />
