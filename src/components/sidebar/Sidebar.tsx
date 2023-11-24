@@ -19,11 +19,11 @@ const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const { appTitle } = AppConfig;
   const homeItem: Partial<ModelConfig> = {
-    modelName: "home",
-    modelPath: "/",
-    navItemIcon: "Home", // Assuming this is the type based on provided context
+    modelName: "dashboard",
+    modelPath: "/dashboard",
+    navItemIcon: "BarChart2", // Assuming this is the type based on provided context
     navItemOrder: 1,
-    pluralizedVerboseModelName: "Home",
+    pluralizedVerboseModelName: "Dashboard",
   };
 
   const AppConfigCopy = {

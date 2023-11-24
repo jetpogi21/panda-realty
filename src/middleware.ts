@@ -65,11 +65,15 @@ export async function middleware(request: NextRequest) {
   const isCurrentPathAModelPath = modelPaths.some((modelPath) =>
     path.includes(modelPath)
   );
+  //const isCurrentPathIsHomePage = false;
   const isCurrentPathIsHomePage = path === "/";
-
+  const domain = process.env.NEXT_PUBLIC_DOMAIN;
   if (!session && (isCurrentPathAModelPath || isCurrentPathIsHomePage)) {
-    const domain = process.env.NEXT_PUBLIC_DOMAIN;
     return NextResponse.redirect(`${domain}/login`);
+  }
+
+  if (session && isCurrentPathIsHomePage) {
+    return NextResponse.redirect(`${domain}/dashboard`);
   }
 
   response.headers.set("Access-Control-Allow-Origin", "*");
