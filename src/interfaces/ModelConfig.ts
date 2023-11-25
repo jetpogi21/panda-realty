@@ -31,6 +31,7 @@ limit: number | null;
 isModal: boolean | null;
 creationOrder: number;
 disableAPIDelete: boolean | null;
+isMasterList: boolean | null;
 }
 
 interface ModelFieldKeys {

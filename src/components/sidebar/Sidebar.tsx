@@ -3,17 +3,19 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import React from "react";
 import { cn } from "@/lib/utils";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/Tooltip";
 import { AppConfig } from "@/lib/app-config";
 import { getInitials } from "@/utils/utilities";
 import { ModelConfig } from "@/interfaces/ModelConfig";
-import { Home, LayoutGrid } from "lucide-react";
+import { List } from "lucide-react";
 import { LucideIcons } from "@/components/LucideIcons";
 import Image from "next/image";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/Accordion";
+import TooltipLink from "@/components/TooltipLink";
 
 const Sidebar: React.FC = () => {
   const pathname = usePathname();
@@ -30,6 +32,18 @@ const Sidebar: React.FC = () => {
     ...AppConfig,
     models: [homeItem, ...AppConfig.models],
   };
+
+  const mainMenuModels = AppConfigCopy.models
+    .filter((model) => model.navItemOrder && !model.isMasterList)
+    .sort(
+      ({ navItemOrder: sortA }, { navItemOrder: sortB }) => sortA! - sortB!
+    );
+
+  const masterListModels = AppConfig.models
+    .filter((model) => model.isMasterList)
+    .sort(
+      ({ navItemOrder: sortA }, { navItemOrder: sortB }) => sortA! - sortB!
+    );
 
   return (
     <div
@@ -55,57 +69,69 @@ const Sidebar: React.FC = () => {
         </Link>
       </div>
       <div className="flex flex-col w-full text-sm">
-        {AppConfigCopy.models
-          .filter((model) => model.navItemOrder)
-          .sort(
-            ({ navItemOrder: sortA }, { navItemOrder: sortB }) =>
-              sortA! - sortB!
-          )
-          .map(
-            ({
-              modelName,
-              modelPath,
-              navItemIcon,
-              pluralizedVerboseModelName,
-            }) => {
-              const NavItemIcon = navItemIcon
-                ? LucideIcons[navItemIcon as keyof typeof LucideIcons]
-                : null;
-              return (
-                <Tooltip key={modelName}>
-                  <TooltipTrigger>
-                    <Link
-                      href={"/" + modelPath!}
-                      className={cn(
-                        "p-2 rounded-sm hover:bg-accent flex gap-4 items-center justify-center lg:justify-start",
-                        {
-                          "bg-accent":
-                            modelPath === "/"
-                              ? pathname === modelPath
-                              : pathname.includes(modelPath!),
-                        }
-                      )}
-                    >
-                      {NavItemIcon ? (
-                        <NavItemIcon className="w-4 h-4" />
-                      ) : (
-                        <LayoutGrid className="w-4 h-4" />
-                      )}
-                      <span className="hidden lg:block">
-                        {pluralizedVerboseModelName}
-                      </span>
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="right"
-                    className="lg:hidden"
-                  >
-                    {pluralizedVerboseModelName}
-                  </TooltipContent>
-                </Tooltip>
-              );
-            }
-          )}
+        {mainMenuModels.map(
+          ({
+            modelName,
+            modelPath,
+            navItemIcon,
+            pluralizedVerboseModelName,
+          }) => {
+            const NavItemIcon = navItemIcon
+              ? LucideIcons[navItemIcon as keyof typeof LucideIcons]
+              : null;
+            return (
+              <TooltipLink
+                modelName={modelName!}
+                modelPath={modelPath!}
+                pathname={pathname}
+                pluralizedVerboseModelName={pluralizedVerboseModelName!}
+                NavItemIcon={NavItemIcon}
+              />
+            );
+          }
+        )}
+        {/*  The master list menu goes here  */}
+        <Accordion
+          type="single"
+          collapsible
+        >
+          <AccordionItem
+            value="item-1"
+            className="border-0"
+          >
+            <AccordionTrigger
+              className={cn(
+                "p-2 rounded-sm hover:bg-accent flex gap-4 items-center justify-center lg:justify-between hover:no-underline"
+                /* {
+                  "bg-accent":
+                    modelPath === "/"
+                      ? pathname === modelPath
+                      : pathname.includes(modelPath!),
+                } */
+              )}
+            >
+              <div className="flex gap-4">
+                <List className="w-4 h-4" />{" "}
+                <span className="hidden lg:block">Master List</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="flex flex-col">
+              {masterListModels.map(
+                ({ modelName, modelPath, pluralizedVerboseModelName }) => {
+                  return (
+                    <TooltipLink
+                      modelName={modelName}
+                      modelPath={modelPath}
+                      pathname={pathname}
+                      pluralizedVerboseModelName={pluralizedVerboseModelName}
+                      NavItemIcon={null}
+                    />
+                  );
+                }
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
     </div>
   );
