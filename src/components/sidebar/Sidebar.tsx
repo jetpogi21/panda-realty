@@ -1,7 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { AppConfig } from "@/lib/app-config";
 import { getInitials } from "@/utils/utilities";
@@ -22,7 +22,7 @@ const Sidebar: React.FC = () => {
   const { appTitle } = AppConfig;
   const homeItem: Partial<ModelConfig> = {
     modelName: "dashboard",
-    modelPath: "/dashboard",
+    modelPath: "dashboard",
     navItemIcon: "BarChart2", // Assuming this is the type based on provided context
     navItemOrder: 1,
     pluralizedVerboseModelName: "Dashboard",
@@ -44,6 +44,19 @@ const Sidebar: React.FC = () => {
     .sort(
       ({ navItemOrder: sortA }, { navItemOrder: sortB }) => sortA! - sortB!
     );
+
+  const masterListPaths = masterListModels.map((model) => model.modelPath);
+  let isCurrentPathAMasterListPath = false;
+  for (let modelPath of masterListPaths) {
+    if (pathname.includes(modelPath)) {
+      isCurrentPathAMasterListPath = true;
+      break;
+    }
+  }
+
+  const [accordionValue, setAccordionValue] = useState(
+    isCurrentPathAMasterListPath ? "item-1" : ""
+  );
 
   return (
     <div
@@ -93,6 +106,7 @@ const Sidebar: React.FC = () => {
         {/*  The master list menu goes here  */}
         <Accordion
           type="single"
+          value={accordionValue}
           collapsible
         >
           <AccordionItem
@@ -101,21 +115,21 @@ const Sidebar: React.FC = () => {
           >
             <AccordionTrigger
               className={cn(
-                "p-2 rounded-sm hover:bg-accent flex gap-4 items-center justify-center lg:justify-between hover:no-underline"
-                /* {
-                  "bg-accent":
-                    modelPath === "/"
-                      ? pathname === modelPath
-                      : pathname.includes(modelPath!),
-                } */
+                "p-2 rounded-sm hover:bg-accent flex gap-4 items-center justify-center lg:justify-between hover:no-underline",
+                {
+                  "bg-accent": isCurrentPathAMasterListPath,
+                }
               )}
+              onClick={(e) =>
+                setAccordionValue((prev) => (prev ? "" : "item-1"))
+              }
             >
               <div className="flex gap-4">
                 <List className="w-4 h-4" />{" "}
                 <span className="hidden lg:block">Master List</span>
               </div>
             </AccordionTrigger>
-            <AccordionContent className="flex flex-col">
+            <AccordionContent className="flex flex-col mt-2">
               {masterListModels.map(
                 ({ modelName, modelPath, pluralizedVerboseModelName }) => {
                   return (
