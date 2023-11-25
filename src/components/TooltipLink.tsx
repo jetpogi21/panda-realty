@@ -24,7 +24,7 @@ const TooltipLink: React.FC<TooltipLinkProps> = ({
   NavItemIcon,
 }) => {
   return (
-    <Tooltip key={modelName}>
+    <Tooltip>
       <TooltipTrigger>
         <Link
           href={"/" + modelPath}

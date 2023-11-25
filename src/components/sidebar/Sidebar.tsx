@@ -94,6 +94,7 @@ const Sidebar: React.FC = () => {
               : null;
             return (
               <TooltipLink
+                key={modelName!}
                 modelName={modelName!}
                 modelPath={modelPath!}
                 pathname={pathname}
@@ -134,6 +135,7 @@ const Sidebar: React.FC = () => {
                 ({ modelName, modelPath, pluralizedVerboseModelName }) => {
                   return (
                     <TooltipLink
+                      key={modelName!}
                       modelName={modelName}
                       modelPath={modelPath}
                       pathname={pathname}
