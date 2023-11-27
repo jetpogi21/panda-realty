@@ -29,7 +29,7 @@ const TooltipLink: React.FC<TooltipLinkProps> = ({
         <Link
           href={"/" + modelPath}
           className={cn(
-            "p-2 rounded-sm hover:bg-accent flex gap-4 items-center justify-center lg:justify-start",
+            "p-2 rounded-sm hover:bg-accent flex gap-4 items-center  lg:justify-start",
             {
               "bg-accent":
                 modelPath === "/"
@@ -44,7 +44,7 @@ const TooltipLink: React.FC<TooltipLinkProps> = ({
             <LayoutGrid className="w-4 h-4" />
           )}
 
-          <span className="hidden lg:block">{pluralizedVerboseModelName}</span>
+          <span>{pluralizedVerboseModelName}</span>
         </Link>
       </TooltipTrigger>
       <TooltipContent

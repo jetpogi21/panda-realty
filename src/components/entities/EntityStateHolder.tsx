@@ -11,6 +11,9 @@ const EntityStateHolder = ({ modelConfig }: { modelConfig: ModelConfig }) => {
   const tableStates = useTableProps<EntityModel>(modelConfig);
   return (
     <>
+      <h1 className="text-2xl font-bold">
+        {modelConfig.pluralizedVerboseModelName}
+      </h1>
       <div className="flex">
         <EntityFilterForm tableStates={tableStates} />
       </div>

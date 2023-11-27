@@ -11,6 +11,9 @@ const EntityCategoryStateHolder = ({ modelConfig }: { modelConfig: ModelConfig }
   const tableStates = useTableProps<EntityCategoryModel>(modelConfig);
   return (
     <>
+      <h1 className="text-2xl font-bold">
+        {modelConfig.pluralizedVerboseModelName}
+      </h1>
       <div className="flex">
         <EntityCategoryFilterForm tableStates={tableStates} />
       </div>

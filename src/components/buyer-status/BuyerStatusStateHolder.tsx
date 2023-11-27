@@ -11,6 +11,9 @@ const BuyerStatusStateHolder = ({ modelConfig }: { modelConfig: ModelConfig }) =
   const tableStates = useTableProps<BuyerStatusModel>(modelConfig);
   return (
     <>
+      <h1 className="text-2xl font-bold">
+        {modelConfig.pluralizedVerboseModelName}
+      </h1>
       <div className="flex">
         <BuyerStatusFilterForm tableStates={tableStates} />
       </div>

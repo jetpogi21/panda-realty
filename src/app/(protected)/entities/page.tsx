@@ -15,9 +15,6 @@ const Entities: React.FC = () => {
     <>
       <div className="flex flex-col flex-1 w-full mx-auto text-sm 2xl:px-0 main-height-less-footer">
         <div className="flex flex-col flex-1 w-full gap-4 pl-4 mx-auto rounded-sm">
-          <h1 className="text-2xl font-bold">
-            {config.pluralizedVerboseModelName}
-          </h1>
           <EntityStateHolder modelConfig={config} />
         </div>
       </div>
