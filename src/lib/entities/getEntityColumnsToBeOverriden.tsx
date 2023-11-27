@@ -52,7 +52,7 @@ export const getEntityColumnsToBeOverriden = <TData, TValue>() => {
               <GenericTooltip
                 Content="Buyer Status"
                 Trigger={
-                  <span className="px-2 text-xs rounded-lg w-fit bg-muted">
+                  <span className="px-2 py-1 text-xs rounded-full w-fit bg-muted">
                     {row.BuyerStatus.name}
                   </span>
                 }
@@ -62,7 +62,7 @@ export const getEntityColumnsToBeOverriden = <TData, TValue>() => {
               <GenericTooltip
                 Content="Contact Category"
                 Trigger={
-                  <span className="px-2 text-xs rounded-lg w-fit bg-muted">
+                  <span className="px-2 py-1 text-xs rounded-full w-fit bg-muted">
                     {row.ContactCategory.name}
                   </span>
                 }

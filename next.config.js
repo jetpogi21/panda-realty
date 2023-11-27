@@ -8,10 +8,13 @@ const nextConfig = {
     ignoreBuildErrors: true,
   }, */
   images: {
-    domains: ["images.pexels.com"],
-  },
-  experimental: {
-    serverComponentsExternalPackages: ["sequelize", "@types/sequelize"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.pexels.com",
+        pathname: "**",
+      },
+    ],
   },
 };
 
