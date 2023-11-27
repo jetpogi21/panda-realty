@@ -35,6 +35,7 @@ import { getFirstAndLastFieldInForm } from "@/lib/getFirstAndLastFieldInForm";
 import useScreenSize from "@/hooks/useScreenSize";
 import { removeRequiredListFromLocalStorage } from "@/lib/removeRequiredListFromLocalStorage";
 import { generateDeletedChildRecords } from "@/lib/generateDeletedChildRecords";
+import { FormikFormFieldGroupGenerator } from "@/components/FormikFormFieldGroupGenerator";
 
 interface ModelFormProps {
   onSuccess: () => void;
@@ -307,18 +308,30 @@ const ContactCategoryForm: React.FC<ContactCategoryFormProps> = (prop) => {
               /*
               Overriding rows example
               style={{
-                gridTemplateAreas: generateGridTemplateAreas(modelConfig, {
-                  overrideRow: isLarge
+                gridTemplateAreas: generateGridTemplateAreas(
+                  modelConfig,
+                  isLarge
                     ? {
-                        1: [
-                          ...fillArray(6, "taskCategoryID"),
-                          ...fillArray(6, "taskIntervalID"),
-                        ],
-                        2: [...fillArray(12, "isSuspended")],
-                        3: [...fillArray(12, "SubTaskTemplates")],
+                        fieldsToExclude: ["notes"],
+                        rowsToDelete: [0, 0],
+                        rowsToAdd: {
+                          0: fillArray(12, "entity_name"),
+                          1: fillArray(12, "entity_category_id"),
+                          2: fillArray(12, "contact_category_id"),
+                          3: fillArray(12, "association"),
+                          4: fillArray(12, "buyer_status_id"),
+                          5: fillArray(12, "customer_type"),
+                          6: fillArray(12, "to_be_contacted_date"),
+                          "-1": fillArray(12, "notes"),
+                        },
                       }
-                    : {},
-                }),
+                    : {
+                        fieldsToExclude: ["notes"],
+                        rowsToAdd: {
+                          "-1": fillArray(12, "notes"),
+                        },
+                      }
+                ),
               */
             >
               {/*
@@ -358,6 +371,25 @@ const ContactCategoryForm: React.FC<ContactCategoryFormProps> = (prop) => {
                   hiddenField,
                 }}
                 ref={ref}
+              />
+              <FormikFormFieldGroupGenerator
+                modelConfig={modelConfig}
+                ref={ref}
+                //If relayouting of the group field is needed.
+                /*
+                gridTemplateOptions={{
+                  "Contact Information": isLarge
+                    ? {
+                        rowsToDelete: [1],
+                        rowsToAdd: {
+                          1: fillArray(12, "phone_number"),
+                          2: fillArray(12, "email_address"),
+                          3: fillArray(12, "website"),
+                        },
+                      }
+                    : undefined,
+                }}
+                */
               />
               <FormikSubformGenerator
                 modelConfig={modelConfig}

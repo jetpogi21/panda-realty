@@ -1,12 +1,17 @@
 import { ModelConfig } from "@/interfaces/ModelConfig";
+import { addItemByIndex } from "@/lib/addItemByIndex";
 import { deleteItemByIndex } from "@/lib/deleteItemByIndex";
 import { getChildModels } from "@/lib/getChildModels";
 import { getChildModelsWithDropzone } from "@/lib/getChildModelsWithDropzone";
 import { getChildModelsWithSimpleRelationship } from "@/lib/getChildModelsWithSimpleRelationship";
 import { getSortedFormikFormControlFields } from "@/lib/getSortedFormikFormControlFields";
-import { findRelationshipModelConfig } from "@/utils/utilities";
+import {
+  findRelationshipModelConfig,
+  forceCastToNumber,
+} from "@/utils/utilities";
+import slugify from "slugify";
 
-interface OverrideRowProp {
+export interface OverrideRowProp {
   [key: number]: string[];
 }
 
@@ -15,11 +20,23 @@ export const generateGridTemplateAreas = (
   options?: {
     overrideRow?: OverrideRowProp;
     rowsToDelete?: number[];
+    rowsToAdd?: Record<number, string[]>;
+    fieldsToExclude?: string[];
+    seqModelFieldGroupID?: number;
   }
 ) => {
-  const { overrideRow, rowsToDelete } = options || {};
+  const {
+    overrideRow,
+    rowsToDelete,
+    rowsToAdd,
+    seqModelFieldGroupID,
+    fieldsToExclude,
+  } = options || {};
   let rows: string[][] = [];
-  const fields = getSortedFormikFormControlFields(modelConfig);
+  const fields = getSortedFormikFormControlFields(modelConfig, {
+    fieldsToExclude,
+    seqModelFieldGroupID,
+  });
 
   let row: string[] = [];
   for (let { columnsOccupied, fieldName } of fields) {
@@ -39,7 +56,6 @@ export const generateGridTemplateAreas = (
     }
     rows[rows.length - 1] = lastRow;
   }
-
   const childModelsWithSimpleRelationship =
     getChildModelsWithSimpleRelationship(modelConfig);
 
@@ -53,7 +69,13 @@ export const generateGridTemplateAreas = (
     rows.push(row);
   }
 
-  const childModels = getChildModels(modelConfig);
+  const fieldGroups = seqModelFieldGroupID ? [] : modelConfig.fieldGroups;
+  for (const fieldGroup of fieldGroups) {
+    row = new Array(12).fill(slugify(fieldGroup.groupName));
+    rows.push(row);
+  }
+
+  const childModels = seqModelFieldGroupID ? [] : getChildModels(modelConfig);
   for (let { seqModelRelationshipID } of childModels) {
     const leftModelConfig = findRelationshipModelConfig(
       seqModelRelationshipID,
@@ -64,7 +86,9 @@ export const generateGridTemplateAreas = (
     rows.push(row);
   }
 
-  const childModelsWithDropzone = getChildModelsWithDropzone(modelConfig);
+  const childModelsWithDropzone = seqModelFieldGroupID
+    ? []
+    : getChildModelsWithDropzone(modelConfig);
   for (let { seqModelRelationshipID } of childModelsWithDropzone) {
     const leftModelConfig = findRelationshipModelConfig(
       seqModelRelationshipID,
@@ -82,6 +106,16 @@ export const generateGridTemplateAreas = (
   if (rowsToDelete) {
     for (const idx of rowsToDelete) {
       rows = deleteItemByIndex(rows, idx);
+    }
+  }
+
+  if (rowsToAdd) {
+    for (const key of Object.keys(rowsToAdd)) {
+      rows = addItemByIndex(
+        rows,
+        forceCastToNumber(key),
+        rowsToAdd[forceCastToNumber(key) as keyof typeof rowsToAdd]
+      );
     }
   }
 

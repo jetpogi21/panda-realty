@@ -56,6 +56,8 @@ dataTypeInterface: string;
 controlType: ControlType;
 columnsOccupied: number;
 summarizedBy: SummarizedBy | null;
+importFieldName: string;
+seqModelFieldGroupID: number | null;
 }
 
 interface ModelFilterOptionKeys {
@@ -98,9 +100,17 @@ slug: string;
 snakeCase: string;
 }
 
+interface ModelFieldGroups {
+   seqModelFieldGroupID: number;
+groupName: string;
+seqModelID: number;
+groupOrder: number;
+}
+
 export interface ModelConfig extends ModelKeys {
   hooks: ModelHooks[];
   fields: ModelFieldKeys[];
   filters: ModelFilterKeys[];
   sorts: ModelSortKeys[];
+  fieldGroups: ModelFieldGroups[];
 }

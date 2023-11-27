@@ -16,7 +16,10 @@ import { findNextItem } from "@/lib/findNextItem";
 import { getChildModelsWithSimpleRelationship } from "@/lib/getChildModelsWithSimpleRelationship";
 import { getFirstAndLastFieldInForm } from "@/lib/getFirstAndLastFieldInForm";
 import { getModelListById } from "@/lib/getModelListById";
-import { getSortedFormikFormControlFields } from "@/lib/getSortedFormikFormControlFields";
+import {
+  GetSortedFormikFormControlFieldsOptions,
+  getSortedFormikFormControlFields,
+} from "@/lib/getSortedFormikFormControlFields";
 import { cn } from "@/lib/utils";
 import { findRelationshipModelConfig } from "@/utils/utilities";
 import { ClassValue } from "clsx";
@@ -35,6 +38,7 @@ interface FormikFormControlGeneratorProps {
     styles?: Record<string, React.CSSProperties>;
     containerClassName?: Record<string, ClassValue>;
     hiddenField?: string;
+    seqModelFieldGroupID?: GetSortedFormikFormControlFieldsOptions["seqModelFieldGroupID"];
   };
 }
 
@@ -44,7 +48,9 @@ export const FormikFormControlGenerator = forwardRef<
   HTMLElement,
   FormikFormControlGeneratorProps
 >(({ modelConfig, options }, ref) => {
-  const controls = getSortedFormikFormControlFields(modelConfig)
+  const controls = getSortedFormikFormControlFields(modelConfig, {
+    seqModelFieldGroupID: options?.seqModelFieldGroupID,
+  })
     .filter(
       ({ databaseFieldName }) => databaseFieldName !== options?.hiddenField
     )
@@ -67,6 +73,8 @@ export const FormikFormControlGenerator = forwardRef<
           ...options?.styles?.[fieldName],
           gridArea: fieldName,
         };
+
+        const willFocusOnLoad = index === 0 && !options?.seqModelFieldGroupID;
 
         const commonProps = {
           name: fieldName,
@@ -119,7 +127,7 @@ export const FormikFormControlGenerator = forwardRef<
                 items={controlOptions}
                 showLabel={true}
                 key={fieldName}
-                setFocusOnLoad={index === 0}
+                setFocusOnLoad={willFocusOnLoad}
                 onTabKeyDown={(name: string) => {
                   const nextField = findNextItem(visibleFields!, fieldName);
                   const nextControlName = name.replace(fieldName, nextField);
@@ -151,7 +159,7 @@ export const FormikFormControlGenerator = forwardRef<
           case "Textarea":
             return (
               <FormikTextArea
-                setFocusOnLoad={index === 0}
+                setFocusOnLoad={willFocusOnLoad}
                 rows={6}
                 key={fieldName}
                 {...commonProps}
@@ -202,7 +210,7 @@ export const FormikFormControlGenerator = forwardRef<
             return (
               <FormikDateAndTime
                 key={fieldName}
-                setFocusOnLoad={index === 0}
+                setFocusOnLoad={willFocusOnLoad}
                 {...commonProps}
               />
             );
@@ -210,7 +218,7 @@ export const FormikFormControlGenerator = forwardRef<
             return (
               <FormikDate
                 key={fieldName}
-                setFocusOnLoad={index === 0}
+                setFocusOnLoad={willFocusOnLoad}
                 {...commonProps}
               />
             );
@@ -237,7 +245,7 @@ export const FormikFormControlGenerator = forwardRef<
               <FormikInput
                 key={fieldName}
                 placeholder={verboseFieldName}
-                setFocusOnLoad={index === 0}
+                setFocusOnLoad={willFocusOnLoad}
                 {...commonProps}
               />
             );

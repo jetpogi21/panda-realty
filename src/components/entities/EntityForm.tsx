@@ -29,12 +29,16 @@ import FormikSubformGenerator from "@/components/FormikSubformGenerator";
 import { getPrevURL } from "@/lib/getPrevURL";
 import { ModelDeleteDialog } from "@/components/ModelDeleteDialog";
 import ModelDropzonesForRelationships from "@/components/ModelDropzonesForRelationships";
-import { generateGridTemplateAreas } from "@/lib/generateGridTemplateAreas";
+import {
+  fillArray,
+  generateGridTemplateAreas,
+} from "@/lib/generateGridTemplateAreas";
 import { cn } from "@/lib/utils";
 import { getFirstAndLastFieldInForm } from "@/lib/getFirstAndLastFieldInForm";
 import useScreenSize from "@/hooks/useScreenSize";
 import { removeRequiredListFromLocalStorage } from "@/lib/removeRequiredListFromLocalStorage";
 import { generateDeletedChildRecords } from "@/lib/generateDeletedChildRecords";
+import { FormikFormFieldGroupGenerator } from "@/components/FormikFormFieldGroupGenerator";
 
 interface ModelFormProps {
   onSuccess: () => void;
@@ -103,17 +107,16 @@ const EntityForm: React.FC<EntityFormProps> = (prop) => {
     prop.data || (modelQuery.data as EntityFormFormikInitialValues);
 
   const isLarge = useScreenSize("lg");
-  const initialValues =
-    getInitialValues<EntityFormFormikInitialValues>(
-      modelConfig,
-      //@ts-ignore
-      entity,
-      {
-        requiredList,
-        skipEmptyRow: isLarge,
-        defaultValues: hiddenField ? { [hiddenField]: 0 } : undefined,
-      }
-    );
+  const initialValues = getInitialValues<EntityFormFormikInitialValues>(
+    modelConfig,
+    //@ts-ignore
+    entity,
+    {
+      requiredList,
+      skipEmptyRow: isLarge,
+      defaultValues: hiddenField ? { [hiddenField]: 0 } : undefined,
+    }
+  );
 
   if (entity) {
     //@ts-ignore
@@ -283,9 +286,7 @@ const EntityForm: React.FC<EntityFormProps> = (prop) => {
     }
   };
 
-  const renderFormik = (
-    formik: FormikProps<EntityFormFormikInitialValues>
-  ) => {
+  const renderFormik = (formik: FormikProps<EntityFormFormikInitialValues>) => {
     const handleSubmitClick: MouseEventHandler = (e) => {
       e.preventDefault();
       formik.submitForm();
@@ -302,7 +303,30 @@ const EntityForm: React.FC<EntityFormProps> = (prop) => {
               /* className="grid xl:grid-cols-[repeat(9,1fr)_auto_auto_auto] gap-4" */
               className="grid grid-cols-12 gap-4"
               style={{
-                gridTemplateAreas: generateGridTemplateAreas(modelConfig),
+                gridTemplateAreas: generateGridTemplateAreas(
+                  modelConfig,
+                  isLarge
+                    ? {
+                        fieldsToExclude: ["notes"],
+                        rowsToDelete: [0, 0],
+                        rowsToAdd: {
+                          0: fillArray(12, "entity_name"),
+                          1: fillArray(12, "entity_category_id"),
+                          2: fillArray(12, "contact_category_id"),
+                          3: fillArray(12, "association"),
+                          4: fillArray(12, "buyer_status_id"),
+                          5: fillArray(12, "customer_type"),
+                          6: fillArray(12, "to_be_contacted_date"),
+                          "-1": fillArray(12, "notes"),
+                        },
+                      }
+                    : {
+                        fieldsToExclude: ["notes"],
+                        rowsToAdd: {
+                          "-1": fillArray(12, "notes"),
+                        },
+                      }
+                ),
               }}
               /*
               Overriding rows example
@@ -354,10 +378,33 @@ const EntityForm: React.FC<EntityFormProps> = (prop) => {
                       }
                     },
                     */
+                    to_be_contacted_date: (newValue) => {
+                      if (newValue) {
+                        formik.setFieldValue("to_be_contacted", true);
+                      } else {
+                        formik.setFieldValue("to_be_contacted", false);
+                      }
+                    },
                   },
                   hiddenField,
                 }}
                 ref={ref}
+              />
+              <FormikFormFieldGroupGenerator
+                modelConfig={modelConfig}
+                ref={ref}
+                gridTemplateOptions={{
+                  "Contact Information": isLarge
+                    ? {
+                        rowsToDelete: [1],
+                        rowsToAdd: {
+                          1: fillArray(12, "phone_number"),
+                          2: fillArray(12, "email_address"),
+                          3: fillArray(12, "website"),
+                        },
+                      }
+                    : undefined,
+                }}
               />
               <FormikSubformGenerator
                 modelConfig={modelConfig}
