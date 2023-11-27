@@ -42,8 +42,6 @@ const Sidebar: React.FC = () => {
       ({ navItemOrder: sortA }, { navItemOrder: sortB }) => sortA! - sortB!
     );
 
-  console.log(mainMenuModels);
-
   const masterListModels = AppConfig.models
     .filter((model) => model.isMasterList)
     .sort(

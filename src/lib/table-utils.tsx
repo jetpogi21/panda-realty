@@ -157,11 +157,10 @@ export const createTableColumns = <T,>(
           meta: {
             type: controlType,
             label: verboseFieldName,
-            alignment: getColumnAlignment(
-              dataType,
-              relatedModelID,
-              dataTypeInterface
-            ),
+            alignment:
+              //@ts-ignore
+              columnsToBeOverriden?.[fieldName]?.meta?.alignment ||
+              getColumnAlignment(dataType, relatedModelID, dataTypeInterface),
           },
           enableSorting: config.sorts.some(
             (sort) => sort.seqModelFieldID === seqModelFieldID

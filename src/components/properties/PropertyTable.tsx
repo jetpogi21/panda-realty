@@ -7,7 +7,11 @@ import {
   PropertySearchParams,
 } from "@/interfaces/PropertyInterfaces";
 import { useQueryClient } from "@tanstack/react-query";
-import { UpdateModelsData, useModelsQuery, useUpdateModelsMutation } from "@/hooks/useModelQuery";
+import {
+  UpdateModelsData,
+  useModelsQuery,
+  useUpdateModelsMutation,
+} from "@/hooks/useModelQuery";
 import { PropertyConfig } from "@/utils/config/PropertyConfig";
 import { BasicModel, GetModelsResponse } from "@/interfaces/GeneralInterfaces";
 import { useModelPageParams } from "@/hooks/useModelPageParams";
@@ -28,7 +32,7 @@ import PropertySingleColumn from "@/components/properties/PropertySingleColumn";
 import { useGenericMutation } from "@/hooks/useGenericMutation";
 import { getGenericMutationEndpoint } from "@/lib/getGenericMutationEndpoint";
 import { removeRequiredListFromLocalStorage } from "@/lib/removeRequiredListFromLocalStorage";
-
+import { getPropertyColumnsToBeOverriden } from "@/lib/properties/getPropertyColumnsToBeOverriden";
 
 const PropertyTable = <T,>({
   tableStates,
@@ -104,7 +108,7 @@ const PropertyTable = <T,>({
     "Add Form Templates": addTaskTemplatesFromTemplateMutation,
   };
   */
-  
+
   //This would produce the same shape as the modelActions above.
   const modelActions = undefined;
 
@@ -120,16 +124,14 @@ const PropertyTable = <T,>({
   }); 
   */
 
-  const columnsToBeOverriden = undefined;
-  /* 
-  Run WriteToGetmodelcolumnstobeoverriden_tsx - getModelColumnsToBeOverriden.tsx
-  const columnsToBeOverriden = getTaskColumnsToBeOverriden<
-    T,
-    unknown
-  >();
-  */
+  /* const columnsToBeOverriden = undefined; */
 
-  const handleSubmit = async (values: PropertyFormikInitialValues, formik: FormikHelpers<PropertyFormikInitialValues>) => {
+  const columnsToBeOverriden = getPropertyColumnsToBeOverriden<T, unknown>();
+
+  const handleSubmit = async (
+    values: PropertyFormikInitialValues,
+    formik: FormikHelpers<PropertyFormikInitialValues>
+  ) => {
     //The reference is the index of the row
     const rowsToBeSubmitted = (
       values[
@@ -158,9 +160,9 @@ const PropertyTable = <T,>({
       Object.keys(inserted).forEach((idx) => {
         const numIdx = idx as unknown as number;
         formik.setFieldValue(`${pluralizedModelName}[${idx}]`, {
-          ...values[
-            pluralizedModelName as keyof PropertyFormikInitialValues
-          ][numIdx],
+          ...values[pluralizedModelName as keyof PropertyFormikInitialValues][
+            numIdx
+          ],
           touched: false,
           [primaryKeyFieldName]:
             inserted[numIdx][primaryKeyFieldName as keyof PropertyModel],
@@ -173,9 +175,8 @@ const PropertyTable = <T,>({
         description: `${modelConfig.pluralizedVerboseModelName} successfully updated`,
       });
     });
-    
   };
- 
+
   const { openDialog, closeDialog } = useGlobalDialog();
 
   const openDialogHandler = (row?: Row<T>["original"]) => {
@@ -207,7 +208,7 @@ const PropertyTable = <T,>({
 
   /* const columnOrderToOverride: [string, number][] = [["isFinished", 2]]; */
   const columnOrderToOverride = undefined;
-  
+
   useEffect(() => {
     setMounted(true);
     return () => {
