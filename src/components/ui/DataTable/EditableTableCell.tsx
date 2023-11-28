@@ -8,6 +8,7 @@ import { FormikInput } from "@/components/formik/FormikInput";
 import { FormikLocalFileInput } from "@/components/formik/FormikLocalFileInput";
 
 import { FormikSelect } from "@/components/formik/FormikSelect";
+import { FormikSwitch } from "@/components/formik/FormikSwitch";
 import { FormikTextArea } from "@/components/formik/FormikTextArea";
 import { BasicModel } from "@/interfaces/GeneralInterfaces";
 import { findNextItem } from "@/lib/findNextItem";
@@ -29,7 +30,8 @@ type ColumnDefMeta = {
     | "Date"
     | "FileInput"
     | "LocalFileInput"
-    | "Currency";
+    | "Currency"
+    | "Switch";
   options: BasicModel[];
   isNumeric: boolean;
   isWholeNumber: boolean;
@@ -122,6 +124,8 @@ export const EditableTableCell = <TData, TValue>({
           }
         />
       );
+    case "Switch":
+      return <FormikSwitch {...commonProps} />;
     case "Select":
       return (
         <FormikSelect
