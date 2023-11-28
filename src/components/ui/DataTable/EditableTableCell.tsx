@@ -125,7 +125,12 @@ export const EditableTableCell = <TData, TValue>({
         />
       );
     case "Switch":
-      return <FormikSwitch {...commonProps} />;
+      return (
+        <FormikSwitch
+          size="sm"
+          {...commonProps}
+        />
+      );
     case "Select":
       return (
         <FormikSelect

@@ -195,7 +195,7 @@ export const createTableColumns = <T,>(
           meta: {
             alignment:
               //@ts-ignore
-              columnsToBeOverriden?.[fieldName]?.meta.alignment || "left",
+              columnsToBeOverriden?.[fieldName]?.meta?.alignment || "left",
           },
           enableSorting: false,
         })

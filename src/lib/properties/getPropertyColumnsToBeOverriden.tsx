@@ -51,7 +51,9 @@ export const getPropertyColumnsToBeOverriden = <TData, TValue>() => {
         const row = cell.row.original as PropertyModel;
         return (
           <div className="flex flex-col items-center gap-2">
-            <div>{row.suburb}</div>
+            <div>
+              {row.suburb} - {row.postcode}
+            </div>
             <div className="p-2 text-xs rounded-sm bg-accent">{row.state}</div>
           </div>
         );
@@ -60,7 +62,7 @@ export const getPropertyColumnsToBeOverriden = <TData, TValue>() => {
         alignment: "center",
       },
     },
-    land_use: {
+    land_use1: {
       header: (header: HeaderContext<TData, TValue>) => (
         <DataTableColumnHeader
           column={header.column}
@@ -71,16 +73,66 @@ export const getPropertyColumnsToBeOverriden = <TData, TValue>() => {
         const row = cell.row.original as PropertyModel;
         return (
           <div className="flex flex-col gap-2">
-            {row.land_use && <div>{row.land_use}</div>}
+            {row.land_use1 && <div>{row.land_use1}</div>}
             {row.zoning && <div>{row.zoning}</div>}
             {row.development_zone && <div>{row.development_zone}</div>}
             {row.primary_plan && <div>{row.primary_plan}</div>}
             {row.rpd && <div>{row.rpd}</div>}
+            {row.improve && <div>{row.improve}</div>}
+            {row.construction && <div>{row.construction}</div>}
           </div>
         );
       },
     },
     building_area: {
+      meta: {
+        alignment: "center",
+      },
+    },
+    sale_price: {
+      header: (header: HeaderContext<TData, TValue>) => (
+        <DataTableColumnHeader
+          column={header.column}
+          title={"Sales"}
+        />
+      ),
+      cell: (cell: CellContext<TData, TValue>) => {
+        const row = cell.row.original as PropertyModel;
+        return (
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-1">
+              {row.valuation_no && <div>{row.valuation_no}</div>}
+              {row.valuation_type && (
+                <div className="px-2 py-1 text-xs rounded-sm bg-accent">
+                  {row.valuation_type}
+                </div>
+              )}
+            </div>
+
+            {row.sale_price ? (
+              <div className="flex items-center gap-2">
+                <CircleDollarSign
+                  className="w-5 h-5"
+                  color="#3e9c35"
+                />
+                {formatCurrency(row.sale_price)}
+              </div>
+            ) : null}
+            {row.sale_date ? (
+              <div className="flex items-center gap-2">
+                <Calendar className="w-5 h-5" />
+                {row.sale_date}
+              </div>
+            ) : null}
+            {row.settlement_date ? (
+              <div className="flex items-center gap-2">
+                <Calendar className="w-5 h-5" />
+                {row.settlement_date}
+              </div>
+            ) : null}
+          </div>
+        );
+      },
       meta: {
         alignment: "center",
       },
@@ -127,6 +179,18 @@ export const getPropertyColumnsToBeOverriden = <TData, TValue>() => {
             ) : null}
           </div>
         );
+      },
+    },
+    buyer_id: {
+      header: (header: HeaderContext<TData, TValue>) => (
+        <DataTableColumnHeader
+          column={header.column}
+          title={"Successful Buyer"}
+        />
+      ),
+      cell: (cell: CellContext<TData, TValue>) => {
+        const row = cell.row.original as PropertyModel;
+        return <div className="flex flex-col gap-2">{row.buyer_id}</div>;
       },
     },
 
