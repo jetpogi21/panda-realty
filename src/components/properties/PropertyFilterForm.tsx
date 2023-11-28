@@ -188,7 +188,11 @@ const PropertyFilterForm = <T,>({
 
   return (
     mounted && (
-      <div className="flex flex-col justify-between w-full gap-4 lg:flex-row">
+      <div
+        className={cn("flex flex-col justify-between w-full gap-4", {
+          "lg:flex-row": !config.singleColumnOnly,
+        })}
+      >
         <Formik
           initialValues={initialValues}
           onSubmit={handleFormikSubmit}
@@ -196,7 +200,7 @@ const PropertyFilterForm = <T,>({
           {renderFormik}
         </Formik>
         <div className={cn(center, "gap-2", "justify-between w-auto")}>
-          <div className="lg:hidden">
+          <div className={cn({ "lg:hidden": !config.singleColumnOnly })}>
             <SortSelector
               onSortChange={handleSortChange}
               sortItems={sortItems}

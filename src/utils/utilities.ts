@@ -586,7 +586,7 @@ export const findConfigItem = <T, K extends keyof T>(
 ): T[K] => {
   const found = configField.find((fld) => fld[key] === valueToMatch)!;
 
-  return found[fieldToFetch];
+  return found?.[fieldToFetch];
 };
 
 export const findConfigItemObject = <T, K extends keyof T>(

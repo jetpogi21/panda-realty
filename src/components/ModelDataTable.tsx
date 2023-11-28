@@ -307,7 +307,9 @@ const ModelDataTable = <T, U, V>({
 
   const columnVisibility: Record<string, boolean> = modelConfig.fields.reduce(
     (acc: Record<string, boolean>, field) => {
-      if (field.hideInTable) {
+      if (modelConfig.singleColumnOnly) {
+        acc[field.fieldName] = false;
+      } else if (field.hideInTable) {
         acc[field.fieldName] = false;
       } else {
         acc[field.fieldName] = !SingleColumnComponent ? !isLarge : true;
@@ -392,13 +394,21 @@ const ModelDataTable = <T, U, V>({
         ].includes(column.id)
       ) {
         if (column.id === "singleColumn") {
-          if (SingleColumnComponent) {
+          if (modelConfig.singleColumnOnly) {
+            column.toggleVisibility(true);
+          } else if (SingleColumnComponent) {
             column.toggleVisibility(isLarge);
           } else {
             column.toggleVisibility(false);
           }
         } else {
-          column.toggleVisibility(!Boolean(SingleColumnComponent) || !isLarge);
+          if (modelConfig.singleColumnOnly) {
+            column.toggleVisibility(false);
+          } else {
+            column.toggleVisibility(
+              !Boolean(SingleColumnComponent) || !isLarge
+            );
+          }
         }
       }
     });
