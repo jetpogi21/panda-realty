@@ -2,20 +2,46 @@ import { ModelConfig } from "@/interfaces/ModelConfig";
 import { AppConfig } from "@/lib/app-config";
 import { findModelUniqueFieldName } from "@/lib/findModelUniqueFieldName";
 import { getListItemFromLocalStorage } from "@/lib/getListItemFromLocalStorage";
-import { getLocalStorage } from "@/lib/getLocalStorage";
 import { findModelPrimaryKeyField, formatCurrency } from "@/utils/utilities";
 import { format } from "date-fns";
 import { Check, X } from "lucide-react";
+import { ReactNode } from "react";
 
-export const generateModelSingleColumnFromFields = <T,>(
+const CaptionAndValue = ({
+  caption,
+  value,
+}: {
+  caption: string;
+  value: any;
+}) => {
+  return value ? (
+    <div className="flex gap-1">
+      <span className="font-bold">{caption}:</span>
+      {value}
+    </div>
+  ) : null;
+};
+
+type OverrideFields = Record<string, ReactNode>;
+
+const generateCaptionAndValueOfFields = <T,>(
   modelConfig: ModelConfig,
   data: T,
-  relationshipConfig?: (typeof AppConfig)["relationships"][number]
+  overrideFields?: OverrideFields,
+  options?: {
+    seqModelFieldGroupID?: number;
+    relationshipConfig?: (typeof AppConfig)["relationships"][number];
+  }
 ) => {
-  return modelConfig.fields
+  const { relationshipConfig, seqModelFieldGroupID } = options || {};
+  const controls = modelConfig.fields
     .filter(
       (field) =>
+        !field.hideInTable &&
         !field.primaryKey &&
+        (seqModelFieldGroupID
+          ? field.seqModelFieldGroupID === seqModelFieldGroupID
+          : !field.seqModelFieldGroupID) &&
         (relationshipConfig
           ? field.databaseFieldName !== relationshipConfig.leftForeignKey
           : true)
@@ -33,6 +59,10 @@ export const generateModelSingleColumnFromFields = <T,>(
         summarizedBy,
         allowedOptions,
       }) => {
+        if (overrideFields?.[fieldName]) {
+          return overrideFields?.[fieldName];
+        }
+
         let result;
         const relatedModel = AppConfig.models.find(
           (model) => model.seqModelID === relatedModelID
@@ -44,6 +74,7 @@ export const generateModelSingleColumnFromFields = <T,>(
             findModelPrimaryKeyField(relatedModel).databaseFieldName;
           //@ts-ignore
           let parentData = data[relatedModel.modelName];
+
           if (!parentData) {
             parentData = getListItemFromLocalStorage(
               relatedModel.modelPath,
@@ -64,7 +95,7 @@ export const generateModelSingleColumnFromFields = <T,>(
             ) : (
               <X className="w-4 h-4 text-destructive" />
             );
-          } else if (fieldValue || fieldValue === 0) {
+          } else if (fieldValue) {
             if (dataType === "DATEONLY") {
               result = format(
                 new Date(fieldValue as string),
@@ -85,12 +116,55 @@ export const generateModelSingleColumnFromFields = <T,>(
           }
         }
 
-        return (
-          <div key={fieldName}>
-            <span className="font-bold">{verboseFieldName}:</span>{" "}
-            <span className="ml-2">{result}</span>
-          </div>
-        );
+        return result ? (
+          <CaptionAndValue
+            key={fieldName}
+            caption={verboseFieldName}
+            value={result}
+          />
+        ) : null;
       }
     );
+
+  const notAllIsNull = controls.some((control) => control !== null);
+
+  return notAllIsNull ? (
+    <div className="flex items-center gap-4">{controls}</div>
+  ) : null;
+};
+
+export const generateModelSingleColumnFromFields = <T,>(
+  modelConfig: ModelConfig,
+  data: T,
+  relationshipConfig?: (typeof AppConfig)["relationships"][number],
+  overrideFields?: OverrideFields
+) => {
+  let elements: ReactNode[] = [];
+  const fieldGroups = modelConfig.fieldGroups.sort(
+    (a, b) => a.groupOrder - b.groupOrder
+  );
+
+  for (const fieldGroup of fieldGroups) {
+    const controlGroup = generateCaptionAndValueOfFields(
+      modelConfig,
+      data,
+      overrideFields,
+      {
+        seqModelFieldGroupID: fieldGroup.seqModelFieldGroupID,
+        relationshipConfig,
+      }
+    );
+
+    if (controlGroup) {
+      elements = [...elements, controlGroup];
+    }
+  }
+
+  elements = [
+    generateCaptionAndValueOfFields(modelConfig, data, overrideFields, {
+      relationshipConfig,
+    }),
+    ...elements,
+  ];
+  return elements;
 };

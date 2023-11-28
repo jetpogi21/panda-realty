@@ -6,9 +6,9 @@ import { generateModelSingleColumnFromFields } from "@/lib/generateModelSingleCo
 
 const modelConfig = BuyerStatusConfig;
 
-const BuyerStatusSingleColumn = <T,>({ 
+const BuyerStatusSingleColumn = <T,>({
   cell,
-relationshipConfig,
+  relationshipConfig,
 }: ModelSingleColumnProps<T>) => {
   const buyerStatus = cell.row.original as BuyerStatusModel;
 
@@ -23,8 +23,59 @@ relationshipConfig,
   */
 
   return (
-    <div className="flex flex-col gap-1">
-      {generateModelSingleColumnFromFields(modelConfig, buyerStatus, relationshipConfig)}
+    <div className="flex flex-col gap-4 py-4">
+      {generateModelSingleColumnFromFields(
+        modelConfig,
+        buyerStatus,
+        relationshipConfig
+        //Fields to be overriden use the fieldName
+        /* {
+          is_favorite: (
+            <Button
+              variant={"ghost"}
+              className={cn("w-5 h-5 p-0 rounded-full ", {
+                "text-green-600": buyerStatus.is_favorite,
+                "hover:text-green-600": !buyerStatus.is_favorite,
+              })}
+            >
+              <SiFoodpanda className="w-5 h-5" />
+            </Button>
+          ),
+          street_address: (
+            <h1 className="font-bold tracking-widest">
+              {buyerStatus.street_address}
+            </h1>
+          ),
+          suburb: (
+            <div className="text-xs">
+              {buyerStatus.suburb} ({buyerStatus.postcode})
+            </div>
+          ),
+          state: (
+            <div className="px-2 text-xs rounded-full bg-accent">
+              {buyerStatus.state}
+            </div>
+          ),
+          bed: (
+            <div className="flex items-center gap-2">
+              <Bed className="w-5 h-5" />
+              {buyerStatus.bed}
+            </div>
+          ),
+          bath: (
+            <div className="flex items-center gap-2">
+              <Bath className="w-5 h-5" />
+              {buyerStatus.bath}
+            </div>
+          ),
+          car: (
+            <div className="flex items-center gap-2">
+              <Car className="w-5 h-5" />
+              {buyerStatus.car}
+            </div>
+          ),
+        } */
+      )}
     </div>
   );
 };

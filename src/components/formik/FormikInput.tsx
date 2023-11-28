@@ -43,6 +43,10 @@ const getFieldValue = (
     if (wholeNumberOnly) {
       return value;
     } else {
+      //@ts-ignore
+      if (!value && value !== 0) {
+        return null;
+      }
       const decimalValue = new Decimal(value as string);
       return formatDecimal(decimalValue);
     }

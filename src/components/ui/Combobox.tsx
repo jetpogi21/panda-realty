@@ -31,6 +31,7 @@ const Combobox = forwardRef<HTMLButtonElement, Combobox>((props, ref) => {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [withSelected, setWithSelected] = useState(false);
+
   const filteredOptions = list.filter((item) =>
     item.name.toLowerCase().includes(input.toLowerCase())
   );

@@ -3,12 +3,16 @@ import { ModelSingleColumnProps } from "@/interfaces/GeneralInterfaces";
 import { PropertyModel } from "@/interfaces/PropertyInterfaces";
 import { PropertyConfig } from "@/utils/config/PropertyConfig";
 import { generateModelSingleColumnFromFields } from "@/lib/generateModelSingleColumnFromFields";
+import { Button } from "@/components/ui/Button";
+import { SiFoodpanda } from "react-icons/si";
+import { cn } from "@/lib/utils";
+import { Bath, Bed, Car } from "lucide-react";
 
 const modelConfig = PropertyConfig;
 
-const PropertySingleColumn = <T,>({ 
+const PropertySingleColumn = <T,>({
   cell,
-relationshipConfig,
+  relationshipConfig,
 }: ModelSingleColumnProps<T>) => {
   const property = cell.row.original as PropertyModel;
 
@@ -23,8 +27,59 @@ relationshipConfig,
   */
 
   return (
-    <div className="flex flex-col gap-1">
-      {generateModelSingleColumnFromFields(modelConfig, property, relationshipConfig)}
+    <div className="flex flex-col gap-4 py-4">
+      {generateModelSingleColumnFromFields(
+        modelConfig,
+        property,
+        relationshipConfig,
+        //Fields to be overriden use the fieldName
+        {
+          is_favorite: (
+            <Button
+              variant={"ghost"}
+              className={cn("w-5 h-5 p-0 rounded-full ", {
+                "text-green-600": property.is_favorite,
+                "hover:text-green-600": !property.is_favorite,
+              })}
+            >
+              <SiFoodpanda className="w-5 h-5" />
+            </Button>
+          ),
+          street_address: (
+            <h1 className="font-bold tracking-widest">
+              {property.street_address}
+            </h1>
+          ),
+          suburb: (
+            <div className="text-xs">
+              {property.suburb} ({property.postcode})
+            </div>
+          ),
+          state: (
+            <div className="px-2 text-xs rounded-full bg-accent">
+              {property.state}
+            </div>
+          ),
+          bed: (
+            <div className="flex items-center gap-2">
+              <Bed className="w-5 h-5" />
+              {property.bed}
+            </div>
+          ),
+          bath: (
+            <div className="flex items-center gap-2">
+              <Bath className="w-5 h-5" />
+              {property.bath}
+            </div>
+          ),
+          car: (
+            <div className="flex items-center gap-2">
+              <Car className="w-5 h-5" />
+              {property.car}
+            </div>
+          ),
+        }
+      )}
     </div>
   );
 };

@@ -6,9 +6,9 @@ import { generateModelSingleColumnFromFields } from "@/lib/generateModelSingleCo
 
 const modelConfig = EntityCategoryConfig;
 
-const EntityCategorySingleColumn = <T,>({ 
+const EntityCategorySingleColumn = <T,>({
   cell,
-relationshipConfig,
+  relationshipConfig,
 }: ModelSingleColumnProps<T>) => {
   const entityCategory = cell.row.original as EntityCategoryModel;
 
@@ -23,8 +23,59 @@ relationshipConfig,
   */
 
   return (
-    <div className="flex flex-col gap-1">
-      {generateModelSingleColumnFromFields(modelConfig, entityCategory, relationshipConfig)}
+    <div className="flex flex-col gap-4 py-4">
+      {generateModelSingleColumnFromFields(
+        modelConfig,
+        entityCategory,
+        relationshipConfig
+        //Fields to be overriden use the fieldName
+        /* {
+          is_favorite: (
+            <Button
+              variant={"ghost"}
+              className={cn("w-5 h-5 p-0 rounded-full ", {
+                "text-green-600": entityCategory.is_favorite,
+                "hover:text-green-600": !entityCategory.is_favorite,
+              })}
+            >
+              <SiFoodpanda className="w-5 h-5" />
+            </Button>
+          ),
+          street_address: (
+            <h1 className="font-bold tracking-widest">
+              {entityCategory.street_address}
+            </h1>
+          ),
+          suburb: (
+            <div className="text-xs">
+              {entityCategory.suburb} ({entityCategory.postcode})
+            </div>
+          ),
+          state: (
+            <div className="px-2 text-xs rounded-full bg-accent">
+              {entityCategory.state}
+            </div>
+          ),
+          bed: (
+            <div className="flex items-center gap-2">
+              <Bed className="w-5 h-5" />
+              {entityCategory.bed}
+            </div>
+          ),
+          bath: (
+            <div className="flex items-center gap-2">
+              <Bath className="w-5 h-5" />
+              {entityCategory.bath}
+            </div>
+          ),
+          car: (
+            <div className="flex items-center gap-2">
+              <Car className="w-5 h-5" />
+              {entityCategory.car}
+            </div>
+          ),
+        } */
+      )}
     </div>
   );
 };
