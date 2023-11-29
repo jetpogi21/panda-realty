@@ -69,7 +69,11 @@ export const generateGridTemplateAreas = (
     rows.push(row);
   }
 
-  const fieldGroups = seqModelFieldGroupID ? [] : modelConfig.fieldGroups;
+  const fieldGroups = seqModelFieldGroupID
+    ? []
+    : modelConfig.fieldGroups
+        .filter((fieldGroup) => !fieldGroup.asTab)
+        .sort((a, b) => a.groupOrder - b.groupOrder);
   for (const fieldGroup of fieldGroups) {
     row = new Array(12).fill(slugify(fieldGroup.groupName));
     rows.push(row);

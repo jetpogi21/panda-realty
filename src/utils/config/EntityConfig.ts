@@ -537,5 +537,6 @@ seqModelFieldGroupID: 1,
 groupName: "Contact Information",
 seqModelID: 99,
 groupOrder: 1,
+asTab: false,
 },],
 }

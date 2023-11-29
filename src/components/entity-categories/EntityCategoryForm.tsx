@@ -36,6 +36,8 @@ import useScreenSize from "@/hooks/useScreenSize";
 import { removeRequiredListFromLocalStorage } from "@/lib/removeRequiredListFromLocalStorage";
 import { generateDeletedChildRecords } from "@/lib/generateDeletedChildRecords";
 import { FormikFormFieldGroupGenerator } from "@/components/FormikFormFieldGroupGenerator";
+import FormikTabGroup from "@/components/formik/FormikTabGroup/FormikTabGroup";
+
 
 interface ModelFormProps {
   onSuccess: () => void;
@@ -415,6 +417,8 @@ const EntityCategoryForm: React.FC<EntityCategoryFormProps> = (prop) => {
                 modelConfig={modelConfig}
               />
             </div>
+            {/* Controls inside the Tabs goes here */}
+            <FormikTabGroup modelConfig={modelConfig} />
           </div>
         </div>
         <div
