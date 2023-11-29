@@ -37,7 +37,7 @@ import { removeRequiredListFromLocalStorage } from "@/lib/removeRequiredListFrom
 import { generateDeletedChildRecords } from "@/lib/generateDeletedChildRecords";
 import { FormikFormFieldGroupGenerator } from "@/components/FormikFormFieldGroupGenerator";
 import FormikTabGroup from "@/components/formik/FormikTabGroup/FormikTabGroup";
-
+import { FavoriteButton } from "@/components/properties/FavoriteButton";
 
 interface ModelFormProps {
   onSuccess: () => void;
@@ -106,17 +106,16 @@ const PropertyForm: React.FC<PropertyFormProps> = (prop) => {
     prop.data || (modelQuery.data as PropertyFormFormikInitialValues);
 
   const isLarge = useScreenSize("lg");
-  const initialValues =
-    getInitialValues<PropertyFormFormikInitialValues>(
-      modelConfig,
-      //@ts-ignore
-      property,
-      {
-        requiredList,
-        skipEmptyRow: isLarge,
-        defaultValues: hiddenField ? { [hiddenField]: 0 } : undefined,
-      }
-    );
+  const initialValues = getInitialValues<PropertyFormFormikInitialValues>(
+    modelConfig,
+    //@ts-ignore
+    property,
+    {
+      requiredList,
+      skipEmptyRow: isLarge,
+      defaultValues: hiddenField ? { [hiddenField]: 0 } : undefined,
+    }
+  );
 
   if (property) {
     //@ts-ignore
@@ -372,6 +371,11 @@ const PropertyForm: React.FC<PropertyFormProps> = (prop) => {
                   },
                   hiddenField,
                 }}
+                //Add controls to be overriden here
+                /*
+                controlsToOverride={{ is_favorite: FavoriteButton }
+                */
+                controlsToOverride={{ is_favorite: FavoriteButton }}
                 ref={ref}
               />
               <FormikFormFieldGroupGenerator

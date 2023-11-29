@@ -10,6 +10,7 @@ import { FormikInput } from "@/components/formik/FormikInput";
 import { FormikSelect } from "@/components/formik/FormikSelect";
 import { FormikSwitch } from "@/components/formik/FormikSwitch";
 import { FormikTextArea } from "@/components/formik/FormikTextArea";
+import { FormikToggle } from "@/components/formik/FormikToggle";
 import { BasicModel } from "@/interfaces/GeneralInterfaces";
 import { ModelConfig } from "@/interfaces/ModelConfig";
 import { findNextItem } from "@/lib/findNextItem";
@@ -23,7 +24,7 @@ import {
 import { cn } from "@/lib/utils";
 import { findRelationshipModelConfig } from "@/utils/utilities";
 import { ClassValue } from "clsx";
-import { CSSProperties } from "react";
+import { CSSProperties, ReactNode } from "react";
 
 interface RequiredList {
   [key: string]: BasicModel[];
@@ -40,6 +41,7 @@ interface FormikFormControlGeneratorProps {
     hiddenField?: string;
     seqModelFieldGroupID?: GetSortedFormikFormControlFieldsOptions["seqModelFieldGroupID"];
   };
+  controlsToOverride?: Record<string, React.FC<any>>;
 }
 
 import { forwardRef } from "react";
@@ -47,7 +49,7 @@ import { forwardRef } from "react";
 export const FormikFormControlGenerator = forwardRef<
   HTMLElement,
   FormikFormControlGeneratorProps
->(({ modelConfig, options }, ref) => {
+>(({ modelConfig, options, controlsToOverride }, ref) => {
   const controls = getSortedFormikFormControlFields(modelConfig, {
     seqModelFieldGroupID: options?.seqModelFieldGroupID,
   })
@@ -109,11 +111,28 @@ export const FormikFormControlGenerator = forwardRef<
           );
         }
 
+        const ControlToOverride = controlsToOverride?.[fieldName];
+        if (ControlToOverride)
+          return (
+            //@ts-ignore
+            <ControlToOverride
+              key={fieldName}
+              {...commonProps}
+            />
+          );
+
         switch (controlType) {
           case "Switch":
             return (
               <FormikSwitch
                 size={"sm"}
+                key={fieldName}
+                {...commonProps}
+              />
+            );
+          case "Toggle":
+            return (
+              <FormikToggle
                 key={fieldName}
                 {...commonProps}
               />

@@ -372,6 +372,10 @@ const ContactCategoryForm: React.FC<ContactCategoryFormProps> = (prop) => {
                   },
                   hiddenField,
                 }}
+                //Add controls to be overriden here
+                /*
+                controlsToOverride={{ is_favorite: FavoriteButton }
+                */
                 ref={ref}
               />
               <FormikFormFieldGroupGenerator

@@ -389,6 +389,10 @@ const EntityForm: React.FC<EntityFormProps> = (prop) => {
                   },
                   hiddenField,
                 }}
+                //Add controls to be overriden here
+                /*
+                controlsToOverride={{ is_favorite: FavoriteButton }
+                */
                 ref={ref}
               />
               <FormikFormFieldGroupGenerator

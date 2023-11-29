@@ -372,6 +372,10 @@ const BuyerStatusForm: React.FC<BuyerStatusFormProps> = (prop) => {
                   },
                   hiddenField,
                 }}
+                //Add controls to be overriden here
+                /*
+                controlsToOverride={{ is_favorite: FavoriteButton }
+                */
                 ref={ref}
               />
               <FormikFormFieldGroupGenerator
