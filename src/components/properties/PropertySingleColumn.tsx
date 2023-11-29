@@ -37,7 +37,7 @@ const PropertySingleColumn = <T,>({
           is_favorite: (
             <Button
               variant={"ghost"}
-              className={cn("w-5 h-5 p-0 rounded-full ", {
+              className={cn("w-5 h-5 p-0 rounded-full", {
                 "text-green-600": property.is_favorite,
                 "hover:text-green-600": !property.is_favorite,
               })}

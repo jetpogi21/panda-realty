@@ -87,7 +87,7 @@ const Sidebar: React.FC = () => {
     mounted && (
       <div
         className={cn(
-          "lg:flex fixed lg:relative inset-y-0 inset-x-0 bg-gray-900 z-10 lg:min-w-[250px] p-4 flex-col items-center  flex-grow-0 border-r border-border",
+          "lg:flex fixed lg:relative inset-y-0 inset-x-0 dark:bg-gray-900 z-10 lg:min-w-[250px] p-4 flex-col items-center  flex-grow-0 border-r border-border",
           !isSidebarShown && "hidden"
         )}
       >

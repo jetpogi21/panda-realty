@@ -9,7 +9,7 @@ type State = {
 
 // Create a store
 export const useSidebar = create<State>((set) => ({
-  isSidebarShown: false,
+  isSidebarShown: true,
   setIsSidebarShown: (isSidebarShown) => set({ isSidebarShown }),
   toggleIsSidebarShown: () =>
     set((state) => ({ isSidebarShown: !state.isSidebarShown })),
