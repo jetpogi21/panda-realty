@@ -45,11 +45,11 @@ const PropertySingleColumn = <T,>({
               <SiFoodpanda className="w-5 h-5" />
             </Button>
           ),
-          street_address: (
+          /* street_address: (
             <h1 className="font-bold tracking-widest">
               {property.street_address}
             </h1>
-          ),
+          ), */
           suburb: (
             <div className="text-xs">
               {property.suburb} ({property.postcode})

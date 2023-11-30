@@ -41,7 +41,11 @@ export function DataTable<T>(props: DataTableProps<T>) {
     dialogFormProps,
     onRowClick,
   } = props;
+
   const rowData = table.getRowModel().rows;
+  const shouldRowClickBeDisabled = modelConfig.fields.some(
+    (field) => field.isDetailLink
+  );
 
   return (
     <Table>
@@ -114,11 +118,15 @@ export function DataTable<T>(props: DataTableProps<T>) {
                       cell.column.id
                     );
 
-                    const cellClickHandler = isSelectable
-                      ? undefined
-                      : dialogFormProps?.openDialogHandler || onRowClick;
+                    const cellClickHandler =
+                      isSelectable || shouldRowClickBeDisabled
+                        ? undefined
+                        : dialogFormProps?.openDialogHandler || onRowClick;
                     /* const cellClickHandler = onRowClick; */
-                    const isCursorDefault = isSelectable || !cellClickHandler;
+                    const isCursorDefault =
+                      isSelectable ||
+                      !cellClickHandler ||
+                      shouldRowClickBeDisabled;
 
                     return (
                       <TableCell

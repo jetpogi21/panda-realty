@@ -2,9 +2,11 @@ import { ModelConfig } from "@/interfaces/ModelConfig";
 import { AppConfig } from "@/lib/app-config";
 import { findModelUniqueFieldName } from "@/lib/findModelUniqueFieldName";
 import { getListItemFromLocalStorage } from "@/lib/getListItemFromLocalStorage";
+import { getRowIndentifier } from "@/lib/getRowIndentifier";
 import { findModelPrimaryKeyField, formatCurrency } from "@/utils/utilities";
 import { format } from "date-fns";
 import { Check, X } from "lucide-react";
+import Link from "next/link";
 import { ReactNode } from "react";
 
 const CaptionAndValue = ({
@@ -58,6 +60,7 @@ const generateCaptionAndValueOfFields = <T,>(
         dataTypeInterface,
         summarizedBy,
         allowedOptions,
+        isDetailLink,
       }) => {
         if (overrideFields?.[fieldName]) {
           return overrideFields?.[fieldName];
@@ -90,6 +93,21 @@ const generateCaptionAndValueOfFields = <T,>(
           const fieldValue = data[fieldName];
 
           if (dataType === "BOOLEAN") {
+            if (controlType === "Toggle") {
+              if (fieldValue) {
+                return (
+                  <div className="p-1 text-xs rounded-md bg-accent">
+                    {verboseFieldName}
+                  </div>
+                );
+              } else {
+                return (
+                  <div className="p-1 text-xs text-gray-500 bg-gray-300 border border-gray-400 rounded-md">
+                    {verboseFieldName}
+                  </div>
+                );
+              }
+            }
             result = fieldValue ? (
               <Check className="w-4 h-4 text-success" />
             ) : (
@@ -114,6 +132,19 @@ const generateCaptionAndValueOfFields = <T,>(
           } else {
             result = fieldValue;
           }
+        }
+
+        if (result && isDetailLink) {
+          const identifier = getRowIndentifier(modelConfig);
+          result = (
+            <Link
+              //@ts-ignore
+              href={`${modelConfig.modelPath}/${data[identifier]}`}
+              className="font-bold underline underline-offset-4"
+            >
+              {result}
+            </Link>
+          );
         }
 
         return result ? (
