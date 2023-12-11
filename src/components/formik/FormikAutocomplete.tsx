@@ -214,10 +214,10 @@ export const FormikAutocomplete = (props: FormikAutocompleteProps) => {
                         value={item.id.toString()}
                         onSelect={handleItemSelect}
                         className={cn(
+                          "aria-selected:bg-background aria-selected:text-foreground",
                           index === highlightedIndex &&
-                            "bg-accent text-accent-foreground"
+                            "aria-selected:bg-accent aria-selected:text-accent-foreground bg-accent text-accent-foreground"
                         )}
-                        aria-selected={index === highlightedIndex}
                       >
                         <Check
                           className={cn(
