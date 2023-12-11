@@ -1,3 +1,4 @@
+import { FormikAutocomplete } from "@/components/formik/FormikAutocomplete";
 import { FormikCheckbox } from "@/components/formik/FormikCheckbox";
 import { FormikCombobox } from "@/components/formik/FormikCombobox";
 import { FormikDate } from "@/components/formik/FormikDate";
@@ -13,6 +14,7 @@ import { FormikTextArea } from "@/components/formik/FormikTextArea";
 import { FormikToggle } from "@/components/formik/FormikToggle";
 import { BasicModel } from "@/interfaces/GeneralInterfaces";
 import { ModelConfig } from "@/interfaces/ModelConfig";
+import { AppConfig } from "@/lib/app-config";
 import { findNextItem } from "@/lib/findNextItem";
 import { getChildModelsWithSimpleRelationship } from "@/lib/getChildModelsWithSimpleRelationship";
 import { getFirstAndLastFieldInForm } from "@/lib/getFirstAndLastFieldInForm";
@@ -22,7 +24,10 @@ import {
   getSortedFormikFormControlFields,
 } from "@/lib/getSortedFormikFormControlFields";
 import { cn } from "@/lib/utils";
-import { findRelationshipModelConfig } from "@/utils/utilities";
+import {
+  findConfigItemObject,
+  findRelationshipModelConfig,
+} from "@/utils/utilities";
 import { ClassValue } from "clsx";
 import { CSSProperties, ReactNode } from "react";
 
@@ -173,6 +178,18 @@ export const FormikFormControlGenerator = forwardRef<
                 allowBlank={allowNull}
                 key={fieldName}
                 {...commonProps}
+              />
+            );
+          case "Autocomplete":
+            const relatedModelConfig = findConfigItemObject(
+              AppConfig.models,
+              "seqModelID",
+              relatedModelID!
+            );
+            return (
+              <FormikAutocomplete
+                {...commonProps}
+                modelConfig={relatedModelConfig}
               />
             );
           case "Textarea":

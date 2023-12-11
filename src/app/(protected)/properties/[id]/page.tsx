@@ -44,8 +44,7 @@ const PropertyFormPage = async ({ params }: { params: { id: string } }) => {
   return (
     <div className="flex flex-col flex-1 w-full mx-auto text-sm lg:px-0 main-height-less-footer">
       <div className="flex flex-col w-full h-full gap-4 pl-4">
-                <div className="flex flex-col w-full h-full mx-auto max-w-7xl">
-
+        <div className="flex flex-col w-full h-full mx-auto max-w-7xl">
           <PropertyForm
             id={params.id}
             data={data}

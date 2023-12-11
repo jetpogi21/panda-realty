@@ -23,10 +23,13 @@ export const getRelatedTableFields = (
         relatedModelConfig;
 
       let column = "";
+
       const isPrimaryKey = primaryKeyValue !== undefined;
-      const excludeCondition = isPrimaryKey
-        ? relationship.excludeInForm
-        : relationship.excludeInTable;
+
+      const excludeCondition =
+        isPrimaryKey && side === "LEFT"
+          ? relationship.excludeInForm
+          : relationship.excludeInTable;
 
       if (!excludeCondition) {
         const fieldStr = fields.map(({ databaseFieldName, fieldName }) =>
@@ -62,9 +65,11 @@ export const getRelatedTableFields = (
   const leftModelRelationships = AppConfig.relationships.filter(
     (relationship) =>
       relationship.leftModelID === modelConfig.seqModelID &&
-      (primaryKeyValue
+      //Why the primaryKeyValue is needed here?
+      /* (primaryKeyValue
         ? !relationship.excludeInForm
-        : !relationship.excludeInTable)
+        : !relationship.excludeInTable) */
+      (primaryKeyValue ? true : !relationship.excludeInTable)
   );
 
   processRelationships(leftModelRelationships, "RIGHT");

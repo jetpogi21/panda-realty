@@ -15,15 +15,18 @@ interface GetResponse<T extends BasicModel> {
   cursor: string;
 }
 
-const fetchModelList = async <U extends BasicModel>(
+export const fetchModelList = async <U extends BasicModel>(
   modelConfig: ModelConfig,
   endpoint: string,
-  useName?: boolean
+  useName?: boolean,
+  params?: Record<string, string>
 ) => {
   const { data } = await axiosClient.get<GetResponse<U>>(endpoint, {
     params: {
       fetchCount: "false",
-      simpleOnly: "true",
+      simpleOnly: params ? "false" : "true",
+      disableLimit: params ? "true" : "false",
+      ...params,
     },
   });
 

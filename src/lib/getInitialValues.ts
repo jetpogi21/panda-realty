@@ -56,6 +56,7 @@ export const getInitialValues = <T>(
       orderField,
       dataTypeOption,
       allowedOptions,
+      controlType,
     }) => {
       const defaultValues = options?.defaultValues;
       if (record) {
@@ -67,6 +68,21 @@ export const getInitialValues = <T>(
               initialValues[key] = defaultValues[key];
             }
           }
+        }
+
+        //also check of controlType is autocomplete
+        if (
+          controlType === "Autocomplete" &&
+          relatedModelID &&
+          record[fieldName as keyof T]
+        ) {
+          const relatedModelConfig = findConfigItemObject(
+            AppConfig.models,
+            "seqModelID",
+            relatedModelID
+          );
+          const { modelName } = relatedModelConfig;
+          initialValues[modelName] = record[modelName as keyof T];
         }
         return;
       }

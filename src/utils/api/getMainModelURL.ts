@@ -26,6 +26,7 @@ export function getMainModelURL(
   const simpleOnly = query["simpleOnly"] === "true";
   const cursor = query["cursor"];
   const limit = query["limit"] || modelConfig.limit || AppConfig.limit || 10;
+  const disableLimit = query["disableLimit"] === "true";
 
   const sort = getSortedValueSimplified(query["sort"], modelConfig); //-date
 
@@ -102,7 +103,7 @@ export function getMainModelURL(
     supQuery.limit(1);
   } else {
     getURLORder(orderBy, supQuery);
-    if (!simpleOnly) {
+    if (!simpleOnly && !disableLimit) {
       supQuery.limit(limit);
     }
   }
