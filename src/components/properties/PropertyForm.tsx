@@ -38,6 +38,7 @@ import { generateDeletedChildRecords } from "@/lib/generateDeletedChildRecords";
 import { FormikFormFieldGroupGenerator } from "@/components/FormikFormFieldGroupGenerator";
 import FormikTabGroup from "@/components/formik/FormikTabGroup/FormikTabGroup";
 import { FavoriteButton } from "@/components/properties/FavoriteButton";
+import { getRecordUniqueName } from "@/lib/getRecordUniqueName";
 
 interface ModelFormProps {
   onSuccess: () => void;
@@ -67,9 +68,7 @@ const PropertyForm: React.FC<PropertyFormProps> = (prop) => {
   const [mounted, setMounted] = useState(false);
   const [recordName, setRecordName] = useState(
     prop.data
-      ? modelConfig.slugField
-        ? (prop.data[modelConfig.slugField as keyof typeof prop.data] as string)
-        : prop.data.id.toString()
+      ? getRecordUniqueName(prop.data, modelConfig)
       : "New " + modelConfig.verboseModelName
   );
   const [isUpdating, setIsUpdating] = useState(false);
@@ -236,11 +235,7 @@ const PropertyForm: React.FC<PropertyFormProps> = (prop) => {
             }
 
             //This will replace the breadcrum record name
-            setRecordName(
-              data[slugField]
-                ? (data[slugField] as string)
-                : (values[slugField as keyof typeof values] as string)
-            );
+            setRecordName(getRecordUniqueName(data, modelConfig) as string);
 
             updateFormFieldsBasedOnRelationships(
               modelConfig,
@@ -503,7 +498,7 @@ const PropertyForm: React.FC<PropertyFormProps> = (prop) => {
         <Breadcrumb
           links={[
             { name: modelConfig.pluralizedVerboseModelName, href: prevURL },
-            { name: recordName, href: "" },
+            { name: recordName as string, href: "" },
           ]}
         />
       ) : null}
