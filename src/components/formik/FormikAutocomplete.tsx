@@ -59,7 +59,7 @@ export const FormikAutocomplete = (props: FormikAutocompleteProps) => {
   //@ts-ignore
   const parentValue = values[modelName];
   const identifier = findModelUniqueFieldName(modelConfig);
-  const defaultSearchTerm = parentValue[identifier];
+  const defaultSearchTerm = parentValue?.[identifier] || "";
   const primaryKeyField = findModelPrimaryKeyField(modelConfig).fieldName;
 
   //@ts-ignore
